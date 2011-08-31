@@ -46,14 +46,6 @@ public:
 		points.push_back(go);
 	}
 
-	//TODO not really effective - its just a workaround
-	std::vector<ofVec2f>& getVertexes(){
-		vector<ofVec2f> pts;
-		for(int i=0;i<points.size();++i){
-			pts.push_back(ofVec2f(points[i]->x,points[i]->y));
-		}
-		return pts;
-	}
 
 	int size(){
 		return points.size();

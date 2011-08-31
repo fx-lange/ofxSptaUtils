@@ -1,1 +1,5 @@
-repo for my own c++ / openFrameworks utils
+ofxSptaUtils
+===========
+repository for c++/openFrameworks utils
+
+requires openFrameworks 007 
