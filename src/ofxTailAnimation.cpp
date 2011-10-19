@@ -37,20 +37,44 @@ void ofxTailAnimation::drawGUI(){
 }
 
 void ofxTailAnimation::setColorEffect(int i,int now){
-	
+	//ofSetColor(255, 255, 255,200);
 	//ofSetColor(255, 0, 255,ofMap(i,0,size,100,255));	
-	ofSetColor(255, 0, 255,ofMap(now,tailLength,0,0,255));	
+	ofSetColor(255, 255, 255,ofMap(now,tailLength,0,0,255));	
 }
+
+
+
+void ofxTailAnimation::drawFull(){
+	
+		
+	for(int i=tailIdx;i<idx;i++){
+		ofSetColor(255, 255, 255);
+		ofLine(pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y);
+	}
+	
+	if(idx<size-1 && run){
+		idx = (idx+1)%size;
+	}
+	if(runEnd){
+		cout << tailIdx << endl;
+		tailIdx=(tailIdx+1)%size;
+		if(tailIdx==size-1){
+			runEnd=false;
+		}
+	}
+	
+	
+}	
 
 void ofxTailAnimation::drawTail(){
 	
-	
+	/*
 	ofSetColor(255, 255, 255,30);
 	ofEllipse(pts[idx],20,20);
 	ofSetColor(255, 0, 255,30);
 	ofEllipse(pts[tailIdx],20,20);
+	*/
 	
-
 	
 	if(tailIdx>idx){
 		for(int i=startIdx;i<idx;i++){
@@ -69,48 +93,73 @@ void ofxTailAnimation::drawTail(){
 		}
 	}
 	
-	if(abs(idx-tailIdx)>tailLength){
+
+	
+	if(abs(idx-tailIdx)>tailLength && !(tailIdx<size-1 && runEnd)){
 		tailIdx = (tailIdx+1)%size;
 	}
 	
-	if (!run && runEnd) {
-		if (idx <= 0) {
-			runTail=true;
-		}
-			
-		if(tailIdx==size-1 && runTail){
-			cout << "end" << endl;
-			runEnd=false;
-		}
-	}
-	
-	if(!runTail){
+
+	if (run) {
 		idx = (idx+1)%size;
+	} else {
+		if (idx<size-1) {
+			idx = (idx+1)%size;
+		}
+		if (tailIdx<size-1) {
+			tailIdx = (tailIdx+1)%size;
+		}
 	}
+
 }
 
-void ofxTailAnimation::drawFull(){
+void ofxTailAnimation::drawTailMulti(){
 	
+	/*
+	ofSetColor(255, 255, 255,30);
+	ofEllipse(pts[idx],20,20);
+	ofSetColor(255, 0, 255,30);
+	ofEllipse(pts[tailIdx],20,20);
+	*/
+	
+	
+	if(tailIdx>idx){
+		for(int i=startIdx;i<idx;i++){
+			setColorEffect(i,idx-i);
+			ofLine(pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y);
+		}
 		
-	for(int i=tailIdx;i<idx;i++){
-		ofSetColor(255, 255, 255);
-		ofLine(pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y);
-	}
-	
-	if(idx<size-1 && run){
-		idx = (idx+1)%size;
-		//runEnd=true;
-	}
-	if(runEnd){
-		cout << tailIdx << endl;
-		tailIdx=(tailIdx+1)%size;
-		if(tailIdx==size-1){
-			runEnd=false;
+		for(int i=tailIdx;i<size-1;i++){
+			setColorEffect(i,size-1-i);
+			ofLine(pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y);
+		}
+	} else {
+		for(int i=tailIdx;i<idx;i++){
+			setColorEffect(i,idx-i);
+			ofLine(pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y);
 		}
 	}
 	
+
+	if(abs(idx-tailIdx)>tailLength && !(tailIdx<size-1 && runEnd)){
+		tailIdx = (tailIdx+1)%size;
+	}
 	
-}	
+	
+	if (run) {
+		idx = (idx+1)%size;
+	} else {
+		if (idx<size-1) {
+			idx = (idx+1)%size;
+		}
+		if (tailIdx<size-1) {
+			tailIdx = (tailIdx+1)%size;
+		}
+	}
+	
+}
+
+
 
 
 void ofxTailAnimation::drawAnimation(){
@@ -122,6 +171,8 @@ void ofxTailAnimation::drawAnimation(){
 			drawTail();
 		} else if (modi==1) {
 			drawFull();
+		} else if (modi==2) {
+			drawTailMulti();
 		}
 		
 		
