@@ -145,6 +145,27 @@ public:
 	void setGrabbing(bool grabbing){
 		marker.setGrabbing(grabbing);
 	}
+
+	virtual void saveToXml(ofxXmlSettings & xml){
+
+		xml.addTag("Marker");
+		xml.pushTag("Marker");
+		marker.saveToXml(xml);
+		xml.popTag();
+		xml.addTag("Points");
+		xml.pushTag("Points");
+		for(int i=0;i<getVertices().size();++i){
+			ofPoint & p = getVertices()[i];
+			int tagNum = xml.addTag("Point");
+			xml.pushTag("Point",tagNum);
+			xml.setValue("Id",i);
+			xml.setValue("X",p.x);
+			xml.setValue("Y",p.y);
+			xml.popTag();
+		}
+		xml.popTag();
+
+	}
 };
 
 #endif

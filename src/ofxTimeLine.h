@@ -184,20 +184,20 @@ public:
 	}
 
 	void saveTrack(){
-		cout << "save track" << endl;
 		int tagNum;
 		//--- track details
 		tagNum = xml.addTag("TRACK");
+		cout << "save track nr:" << tagNum << endl;
 		xml.pushTag("TRACK",tagNum);
 		xml.addTag("Details");
 		xml.pushTag("Details");
 		//TODO länge des tracks - minimal letztes ende einer animation
 		xml.setValue("Length",0);
 		xml.popTag();
+
 		//--- save animations
 		xml.addTag("Animations");
 		xml.pushTag("Animations");
-		//TODO
 		for(int i=0;i<animations.size();++i){
 			tagNum = xml.addTag("Animation");
 			xml.pushTag("Animation",tagNum);

@@ -134,6 +134,42 @@ public:
 		p1.setGrabbing(bGrabbing);
 		p2.setGrabbing(bGrabbing);
 	}
+
+	virtual void saveToXml(ofxXmlSettings & xml){
+		xml.addTag("Start");
+		xml.pushTag("Start");
+		start.saveToXml(xml);
+		xml.popTag();
+		xml.addTag("End");
+		xml.pushTag("End");
+		end.saveToXml(xml);
+		xml.popTag();
+		xml.addTag("P1");
+		xml.pushTag("P1");
+		p1.saveToXml(xml);
+		xml.popTag();
+		xml.addTag("P2");
+		xml.pushTag("P2");
+		p2.saveToXml(xml);
+		xml.popTag();
+		xml.addTag("Marker");
+		xml.pushTag("Marker");
+		marker.saveToXml(xml);
+		xml.popTag();
+		xml.addTag("Points");
+		xml.pushTag("Points");
+		for(int i=0;i<curve.getVertices().size();++i){
+			ofPoint & p = curve.getVertices()[i];
+			int tagNum = xml.addTag("Point");
+			xml.pushTag("Point",tagNum);
+			xml.setValue("Id",i);
+			xml.setValue("X",p.x);
+			xml.setValue("Y",p.y);
+			xml.popTag();
+		}
+		xml.popTag();
+
+	}
 };
 
 #endif
