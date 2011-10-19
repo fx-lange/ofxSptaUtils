@@ -6,6 +6,7 @@
 #include "ofxGrabbableObject.h"
 #include "ofxAnimationI.h"
 #include "ofxTimer.h"
+#include "ofxXmlSettings.h"
 
 struct TimeLineSettings{
 	float * x0,* y0, * width, * height, * timerange, * stepSize;
@@ -14,6 +15,7 @@ struct TimeLineSettings{
 class ofxTimeWindow : public ofxGrabbableObject{
 protected:
 	ofxAnimationI * animation;
+	int animationIdx;
 	ofxTimer timer ,timerStop;
 	float resetY;
 	float buttonSize;
@@ -79,7 +81,11 @@ public:
 		ofAddListener(timerStop.TIMER_REACHED, this, &ofxTimeWindow::stopAnimation);
 	}
 
-	void calcStartTime(){
+	void setAnimationIdx(int idx){
+		animationIdx = idx;
+	}
+
+	float calcStartTime(){
 		float x0 = *(settings->x0);
 		float w = *(settings->width);
 		float range = *(settings->timerange);
@@ -87,6 +93,7 @@ public:
 		timer.setTimer(time*1000);//TODO -tl->x);
 		cout << "set timer to: " << time <<  "s" << endl;
 		timer.stopTimer();
+		return time;
 	}
 
 	float getAnimationLength(){
@@ -95,15 +102,20 @@ public:
 		return abs(xt - x0) / *settings->width * *settings->timerange;
 	}
 
-	void startAnimation(ofEventArgs &e){
-		cout << "start animation" << endl;
+	int getModi(){
 		int modi=0;
 		for(int i=0;i<modis.size();++i){
 			if(modis[i]->isClicked()){
 				modi = i+1;
 			}
 		}
-		animation->start(modi);
+		return modi;
+	}
+
+	void startAnimation(ofEventArgs &e){
+		cout << "start animation" << endl;
+
+		animation->start(getModi());
 //		cout << "Timerange: " <<getAnimationLength() << endl;
 		timerStop.reset();
 		timerStop.setTimer(getAnimationLength()*1000);
@@ -174,6 +186,13 @@ public:
 
 		ofEnableAlphaBlending();
 		ofPopStyle();
+	}
+
+	void saveToXml(ofxXmlSettings &  xml){
+		xml.setValue("AnimationIdx",animationIdx);
+		xml.setValue("Modi",getModi());
+		xml.setValue("Start",calcStartTime());
+		xml.setValue("Length",getAnimationLength());
 	}
 
 };

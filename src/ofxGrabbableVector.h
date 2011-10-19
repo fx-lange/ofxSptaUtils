@@ -62,5 +62,18 @@ public:
 			radius.disableGrabbing();
 		}
 	}
+
+	virtual void saveToXml(ofxXmlSettings & xml){
+		ofxGrabbableObject::saveToXml(xml);
+		xml.addTag("Radius");
+		xml.pushTag("Radius");
+		radius.saveToXml(xml);
+		xml.popTag();
+		xml.addTag("Lever");
+		xml.pushTag("Lever");
+		lever.saveToXml(xml);
+		xml.popTag();
+
+	}
 };
 #endif

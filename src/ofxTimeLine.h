@@ -4,6 +4,7 @@
 #include "ofMain.h"
 #include "ofxAnimationI.h"
 #include "ofxTimeWindow.h"
+#include "ofxXmlSettings.h"
 
 
 class ofxTimeLine : public ofxGrabbableObject{
@@ -11,6 +12,8 @@ protected:
 	vector<ofxTimeWindow*> timeWindows;
 	vector<ofxAnimationI *> animations;
 	TimeLineSettings settings;
+	ofxXmlSettings xml;
+
 	long startTime;
 
 	void checkAnimations(){
@@ -23,6 +26,7 @@ protected:
 				tw->setup(obj->x,y+dropZone.height-lineHeight*(i+0.5),lineHeight,lineHeight,animations[i]);
 				tw->color.set(0,0,200);
 				tw->setTimer(&settings);
+				tw->setAnimationIdx(i);
 				timeWindows.push_back(tw);
 			}
 		}
@@ -160,7 +164,7 @@ public:
 	}
 
 	virtual void mouseReleased(ofMouseEventArgs &e) {
-		if (!bGrabbingEnabled || !bPressed)
+		if (!bGrabbingEnabled || !bPressed )
 			return;
 		bPressed = false;
 
@@ -177,6 +181,47 @@ public:
 		for(int i=0;i<animations.size();++i){
 			animations[i]->setGrabbing(bGrabbing);
 		}
+	}
+
+	void saveTrack(){
+		cout << "save track" << endl;
+		int tagNum;
+		//--- track details
+		tagNum = xml.addTag("TRACK");
+		xml.pushTag("TRACK",tagNum);
+		xml.addTag("Details");
+		xml.pushTag("Details");
+		//TODO länge des tracks - minimal letztes ende einer animation
+		xml.setValue("Length",0);
+		xml.popTag();
+		//--- save animations
+		xml.addTag("Animations");
+		xml.pushTag("Animations");
+		//TODO
+		for(int i=0;i<animations.size();++i){
+			tagNum = xml.addTag("Animation");
+			xml.pushTag("Animation",tagNum);
+			xml.setValue("Id",i);
+			animations[i]->saveToXml(xml);
+			xml.popTag();
+		}
+		xml.popTag();
+		// --
+
+		//--- save timewindows
+		xml.addTag("TimeWindows");
+		xml.pushTag("TimeWindows");
+		for(int i=0;i<timeWindows.size();++i){
+			tagNum = xml.addTag("TimeWindow");
+			xml.pushTag("TimeWindow",tagNum);
+			xml.setValue("Id",i);
+			timeWindows[i]->saveToXml(xml);
+			xml.popTag();
+		}
+		xml.popTag();
+		// --
+		xml.popTag();
+		xml.saveFile("track.xml");
 	}
 };
 

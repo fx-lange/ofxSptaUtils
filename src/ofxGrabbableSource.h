@@ -55,6 +55,12 @@ public:
 		bGrabbingEnabled = bGrabbing;
 		timeGrabber.setGrabbing(bGrabbing);
 	}
+
+	virtual void saveToXml(ofxXmlSettings & xml){
+		ofxAnimationI::saveToXml(xml);
+		xml.setValue("Typ","SOURCE");
+		ofxGrabbableVector::saveToXml(xml);
+	}
 };
 
 #endif

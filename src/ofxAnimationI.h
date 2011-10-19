@@ -4,6 +4,7 @@
 
 #include "ofMain.h"
 #include "ofxGrabbableObject.h"
+#include "ofxXmlSettings.h"
 
 /*	Eventinterface
  *
@@ -34,6 +35,17 @@ public:
 	virtual void setGrabbing(bool bGrabbing){
 		timeGrabber.setGrabbing(bGrabbing);
 //		visible.setGrabbing(bGrabbing);
+	}
+
+	virtual void saveToXml(ofxXmlSettings & xml){
+		xml.addTag("TimeGrabber");
+		xml.pushTag("TimeGrabber");
+		timeGrabber.saveToXml(xml);
+		xml.popTag();
+		xml.addTag("Visible");
+		xml.pushTag("Visible");
+		visible.saveToXml(xml);
+		xml.popTag();
 	}
 };
 

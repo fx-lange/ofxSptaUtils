@@ -2,7 +2,7 @@
 #define __GRABBABLEOBJECT.H__
 
 #include "ofMain.h"
-
+#include "ofxXmlSettings.h"
 
 //TODO nach Q3 - grundformen rect ellipse triangle
 class ofxGrabbableObject : public ofPoint{
@@ -155,6 +155,11 @@ public:
 			return;
 
 		bPressed = false;
+	}
+
+	virtual void saveToXml(ofxXmlSettings & xml){
+		xml.setValue("X",x);
+		xml.setValue("Y",y);
 	}
 
 	//CALLBACK functions

@@ -94,6 +94,21 @@ public:
 		ofxAnimationI::setGrabbing(grabbing);
 		ofxGrabbablePolyline::setGrabbing(grabbing);
 	}
+
+	virtual void saveToXml(ofxXmlSettings & xml){
+		ofxAnimationI::saveToXml(xml);
+		xml.setValue("Typ","FORCETUNNEL");//TODO über enum lösen!
+		xml.addTag("Points");
+		xml.pushTag("Points");
+		for(int i=0;i<points.size();++i){
+			int tagNum = xml.addTag("Point");
+			xml.pushTag("Point",tagNum);
+			xml.setValue("Id",i);
+			points[i]->saveToXml(xml);
+			xml.popTag();
+		}
+		xml.popTag();
+	}
 };
 
 #endif
