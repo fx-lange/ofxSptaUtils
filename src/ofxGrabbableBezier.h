@@ -22,8 +22,8 @@ public:
 		//setup grabber and marker
 		start.setup(50,50,20,20);
 		p1.setup(50,100,20,20);
-		p2.setup(100,100,20,20);
-		end.setup(100,50,20,20);
+		p2.setup(500,200,20,20);
+		end.setup(400,500,20,20);
 		marker.setup(50,150,10,10);
 		marker.color.set(0,255,255);
 		start.color.set(0,255,255);

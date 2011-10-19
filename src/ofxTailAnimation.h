@@ -16,7 +16,7 @@ protected:
 	ofVec3f drawPoint;
 	float mouseX, mouseY;
 	int tailLength;
-	bool run;
+	bool run,runEnd,runTail;
 	int modi;
 
 
@@ -43,11 +43,14 @@ public:
 		cout << "startet mit modi: " << modi << endl;
 		reset();
 		run = true;
+		runEnd=false;
+		runTail=false;
 		this->modi=modi;
 	}
 
 	virtual void stop(){
 		run = false;
+		runEnd=true;
 	}
 
 	virtual void update(){}
@@ -63,6 +66,11 @@ public:
 	void reset(){
 		tailIdx = idx = startIdx;
 	}
+	
+	void drawTail();
+	void drawFull();
+	
+	void setColorEffect(int i,int now);
 
 	int getSize(){
 		return size;
