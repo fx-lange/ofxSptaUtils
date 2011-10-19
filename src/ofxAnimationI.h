@@ -3,6 +3,7 @@
 
 
 #include "ofMain.h"
+#include "ofxGrabbableObject.h"
 
 /*	Eventinterface
  *

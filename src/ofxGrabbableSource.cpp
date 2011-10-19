@@ -1,6 +1,6 @@
 #include "ofxGrabbableSource.h"
 
-virtual void ofxGrabbableSource::update(){//TODO radius und zeit für bestimmung wie oft und wieviele!!!
+void ofxGrabbableSource::update(){//TODO radius und zeit für bestimmung wie oft und wieviele!!!
 	if(!run)
 		return;
 	Particle * p = particleSystem->getNext();

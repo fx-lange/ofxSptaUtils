@@ -1,6 +1,6 @@
 #include "ofxTailAnimation.h"
 
-virtual void ofxTailAnimation::drawGUI(){
+void ofxTailAnimation::drawGUI(){
 	ofPushStyle();
 	ofxAnimationI::drawGUI();
 
@@ -36,7 +36,7 @@ virtual void ofxTailAnimation::drawGUI(){
 	ofPopStyle();
 }
 
-virtual void ofxTailAnimation::drawAnimation(){
+void ofxTailAnimation::drawAnimation(){
 	if(size>3 && run){
 		for(int i=tailIdx;i<=idx;i++){
 			ofEllipse(pts[i],10,10);
@@ -107,7 +107,7 @@ void ofxTailAnimation::calcNearest(){
 	startIdx = nearestIdx;
 }
 
-virtual void ofxTailAnimation::setup(float stepSize){
+void ofxTailAnimation::setup(float stepSize){
 	startIdx = idx = 0;
 	tmpStepSize = this->stepSize = stepSize;
 	size = 0;

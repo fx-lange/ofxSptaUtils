@@ -1,6 +1,6 @@
 #include "ofxGrabbableVector.h"
 
-virtual void ofxGrabbableVector::draw(){
+void ofxGrabbableVector::draw(){
 	ofPushStyle();
 	ofEnableAlphaBlending();
 	ofNoFill();
