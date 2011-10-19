@@ -7,7 +7,7 @@
 
 class ofxTailAnimation : public ofxGrabbableObject, public ofxAnimationI{
 protected:
-	int idx,tailIdx;
+	int idx,tailIdx; 
 	int startIdx;
 	int size;
 	float stepSize;
@@ -16,7 +16,7 @@ protected:
 	ofVec3f drawPoint;
 	float mouseX, mouseY;
 	int tailLength;
-	bool run,runEnd,runTail;
+	bool run,runEnd;
 	int modi;
 
 
@@ -44,7 +44,6 @@ public:
 		reset();
 		run = true;
 		runEnd=false;
-		runTail=false;
 		this->modi=modi;
 	}
 
@@ -68,6 +67,7 @@ public:
 	}
 	
 	void drawTail();
+	void drawTailMulti();
 	void drawFull();
 	
 	void setColorEffect(int i,int now);
