@@ -43,7 +43,7 @@ public:
 
 	virtual void start(int modi = 0){
 		cout << "startet mit modi: " << modi << endl;
-		reset();
+//		reset();
 		run = true;
 		runEnd=false;
 		this->modi=modi;
