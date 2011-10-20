@@ -8,8 +8,7 @@
 
 class ofxTailAnimation : public ofxGrabbableObject, public ofxAnimationI{
 protected:
-	int idx,tailIdx; 
-	int startIdx;
+	int idx,tailIdx,sidx; 
 	int size;
 	float stepSize;
 	int tmpStepSize;
@@ -22,12 +21,14 @@ protected:
 	
 	int mIdx[3],mTailIdx[3];
 	bool mRunEnd[3];
+	bool looped,started;
 
 
 	void calcNearest();
 	virtual void setup(float stepSize);
 
 public:
+	int startIdx;
 	SettingSourceQ3 * settings;
 	virtual void setup(float x,float y,float w, float h,SettingSourceQ3 * settings, float stepSize=1){
 		ofxGrabbableObject::setup(x,y,w,h);
@@ -40,6 +41,8 @@ public:
 		color.set(255,255,0);
 		timeGrabber.fillMe = true;
 		this->settings = settings;
+		looped=false;
+		started=false;
 	}
 
 	virtual void drawGUI();
@@ -47,8 +50,6 @@ public:
 	virtual void start(int modi = 0){
 		cout << "startet mit modi: " << modi << endl;
 		reset();
-		run = true;
-		runEnd=false;
 		this->modi=modi;
 	}
 
@@ -72,6 +73,11 @@ public:
 		for (int i=0; i<3; i++){
 			mTailIdx[i]= mIdx[i] = startIdx;
 		}
+		run = true;
+		runEnd=false;
+		sidx=0;
+		looped=false;
+		started=false;
 	}
 	
 	void drawTail();
