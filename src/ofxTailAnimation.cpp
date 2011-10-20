@@ -108,6 +108,8 @@ void ofxTailAnimation::drawTail(){
 		}
 		if (tailIdx<size-1) {
 			tailIdx = (tailIdx+1)%size;
+		} else {
+			cout << "ende" << endl;
 		}
 	}
 
@@ -173,6 +175,7 @@ void ofxTailAnimation::drawAnimation(){
 			drawFull();
 		} else if (modi==2) {
 			drawTailMulti();
+			
 		}
 		
 		

@@ -19,6 +19,9 @@ protected:
 	int tailLength;
 	bool run,runEnd;
 	int modi;
+	
+	int mIdx[3],mTailIdx[3];
+	bool mRunEnd[3];
 
 
 	void calcNearest();
@@ -66,6 +69,9 @@ public:
 
 	void reset(){
 		tailIdx = idx = startIdx;
+		for (int i=0; i<3; i++){
+			mTailIdx[i]= mIdx[i] = startIdx;
+		}
 	}
 	
 	void drawTail();
