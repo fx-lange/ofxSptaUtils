@@ -47,6 +47,15 @@ public:
 		visible.saveToXml(xml);
 		xml.popTag();
 	}
+	virtual void loadFromXml(ofxXmlSettings & xml){
+		xml.pushTag("TimeGrabber");
+		timeGrabber.loadFromXml(xml);
+		xml.popTag();
+		xml.pushTag("Visible");
+		visible.loadFromXml(xml);
+		xml.popTag();
+	}
+
 };
 
 

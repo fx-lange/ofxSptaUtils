@@ -162,6 +162,11 @@ public:
 		xml.setValue("Y",y);
 	}
 
+	virtual void loadFromXml(ofxXmlSettings & xml){
+		x = xml.getValue("X",0);
+		y = xml.getValue("Y",0);
+	}
+
 	//CALLBACK functions
 	void setCallbackFunc(void (*callbackFunc)(vector<void *>,float,float) ){
 		callbackPosDiff = callbackFunc;

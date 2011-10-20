@@ -183,7 +183,7 @@ public:
 		}
 	}
 
-	void saveTrack(){
+	void saveTrackToXml(){
 		int tagNum;
 		//--- track details
 		tagNum = xml.addTag("TRACK");
@@ -222,6 +222,38 @@ public:
 		// --
 		xml.popTag();
 		xml.saveFile("track.xml");
+	}
+
+	void loadTrackFromXml(ofxXmlSettings & xml){
+		int tagNum;
+		//--- track details
+		xml.pushTag("TRACK");
+		xml.pushTag("Details");
+		//TODO länge des tracks - minimal letztes ende einer animation
+//		xml.setValue("Length",0);
+		xml.popTag();
+
+		//--- load animations
+		//schon in app
+		// --
+
+		//--- save timewindows
+		xml.pushTag("TimeWindows");
+		for(int i=0;i<xml.getNumTags("TimeWindow");++i){
+			xml.pushTag("TimeWindow",i);
+			int aIdx = xml.getValue("AnimationIdx",0);
+			ofxAnimationI * animation = animations[aIdx];
+			ofxTimeWindow * tw = new ofxTimeWindow();
+			tw->setup(0,y+dropZone.height-lineHeight*(aIdx+0.5),lineHeight,lineHeight,animation);
+			tw->setTimer(&settings);
+			tw->loadFromXml(xml);
+			tw->setAnimationIdx(aIdx);
+			timeWindows.push_back(tw);
+			xml.popTag();
+		}
+		xml.popTag();
+		// --
+		xml.popTag();
 	}
 };
 

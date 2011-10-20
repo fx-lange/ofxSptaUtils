@@ -73,7 +73,16 @@ public:
 		xml.pushTag("Lever");
 		lever.saveToXml(xml);
 		xml.popTag();
+	}
 
+	virtual void loadFromXml(ofxXmlSettings & xml){
+		ofxGrabbableObject::loadFromXml(xml);
+		xml.pushTag("Radius");
+		radius.loadFromXml(xml);
+		xml.popTag();
+		xml.pushTag("Lever");
+		lever.loadFromXml(xml);
+		xml.popTag();
 	}
 };
 #endif

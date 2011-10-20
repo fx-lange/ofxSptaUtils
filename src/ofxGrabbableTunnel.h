@@ -97,7 +97,7 @@ public:
 
 	virtual void saveToXml(ofxXmlSettings & xml){
 		ofxAnimationI::saveToXml(xml);
-		xml.setValue("Typ","FORCETUNNEL");//TODO über enum lösen!
+		xml.setValue("Type","FORCETUNNEL");//TODO über enum lösen!
 		xml.addTag("Points");
 		xml.pushTag("Points");
 		for(int i=0;i<points.size();++i){
@@ -105,6 +105,20 @@ public:
 			xml.pushTag("Point",tagNum);
 			xml.setValue("Id",i);
 			points[i]->saveToXml(xml);
+			xml.popTag();
+		}
+		xml.popTag();
+	}
+
+	virtual void loadFromXml(ofxXmlSettings & xml){
+		ofxAnimationI::loadFromXml(xml);
+		xml.pushTag("Points");
+		for(int i=0;i<xml.getNumTags("Point");++i){
+			xml.pushTag("Point",i);
+			ofxGrabbableVector * v = new ofxGrabbableVector();
+			v->setup(0,0,rectWidth,rectWidth);
+			v->loadFromXml(xml);
+			points.push_back(v);
 			xml.popTag();
 		}
 		xml.popTag();

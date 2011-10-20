@@ -94,6 +94,42 @@ public:
 		ofxAnimationI::setGrabbing(bGrabbing);
 		bGrabbingEnabled = bGrabbing;
 	}
+
+	virtual void saveToXml(ofxXmlSettings & xml){
+		ofxAnimationI::saveToXml(xml);
+		ofxGrabbableObject::saveToXml(xml);
+		xml.setValue("Type","TAILANIMATION");//TODO über enum lösen!
+		xml.setValue("StartIdx",startIdx);
+		xml.addTag("Points");
+		xml.pushTag("Points");
+		for(int i=0;i<pts.size();++i){
+			int tagNum = xml.addTag("Point");
+			xml.pushTag("Point",tagNum);
+			ofPoint & p = pts[i];
+			xml.setValue("Id",i);
+			xml.setValue("X",p.x);
+			xml.setValue("Y",p.y);
+			xml.popTag();
+		}
+		xml.popTag();
+	}
+
+	virtual void loadFromXml(ofxXmlSettings & xml){
+		ofxAnimationI::loadFromXml(xml);
+		ofxGrabbableObject::loadFromXml(xml);
+		xml.pushTag("Points");
+		for(int i=0;i<xml.getNumTags("Point");++i){
+			xml.pushTag("Point",i);
+			ofPoint p;
+			p.x = xml.getValue("X",0);
+			p.y = xml.getValue("Y",0);
+			pts.push_back(p);
+			xml.popTag();
+		}
+		xml.popTag();
+		size = pts.size();
+		startIdx = xml.getValue("StartIdx",0);
+	}
 };
 
 #endif

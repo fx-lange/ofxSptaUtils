@@ -168,7 +168,36 @@ public:
 			xml.popTag();
 		}
 		xml.popTag();
+	}
 
+	virtual void loadFromXml(ofxXmlSettings & xml){
+		xml.pushTag("Start");
+		start.loadFromXml(xml);
+		xml.popTag();
+		xml.pushTag("End");
+		end.loadFromXml(xml);
+		xml.popTag();
+		xml.pushTag("P1");
+		p1.loadFromXml(xml);
+		xml.popTag();
+		xml.pushTag("P2");
+		p2.loadFromXml(xml);
+		xml.popTag();
+		xml.pushTag("Marker");
+		marker.loadFromXml(xml);
+		xml.popTag();
+		xml.pushTag("Points");
+
+		for(int i=0;i<xml.getNumTags("Point");++i){
+			ofPoint p;
+			xml.pushTag("Point",i);
+			p.x = xml.getValue("X",0);
+			p.y = xml.getValue("Y",0);
+			curve.addVertex(p);
+			xml.popTag();
+		}
+		xml.popTag();
+		bDrawNext = false;
 	}
 };
 

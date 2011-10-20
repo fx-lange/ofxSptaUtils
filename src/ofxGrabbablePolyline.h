@@ -166,6 +166,24 @@ public:
 		xml.popTag();
 
 	}
+
+	virtual void loadFromXml(ofxXmlSettings & xml){
+		xml.pushTag("Marker");
+		marker.loadFromXml(xml);
+		marker.bActive = false;
+		xml.popTag();
+		xml.pushTag("Points");
+
+		for(int i=0;i<xml.getNumTags("Point");++i){
+			ofPoint p;
+			xml.pushTag("Point",i);
+			p.x = xml.getValue("X",0);
+			p.y = xml.getValue("Y",0);
+			addVertex(p);
+			xml.popTag();
+		}
+		xml.popTag();
+	}
 };
 
 #endif

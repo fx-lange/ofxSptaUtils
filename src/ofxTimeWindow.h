@@ -96,20 +96,50 @@ public:
 		return time;
 	}
 
+	void setPosXByStartTime(float time){
+		float x0 = *(settings->x0);
+		float w = *(settings->width);
+		float range = *(settings->timerange);
+		x = time / range * w;
+		x = x + x0 + width/2;
+	}
+
 	float getAnimationLength(){
 		float x0 = x-width/2;
 		float xt = timeRangeGrabber.x - timeRangeGrabber.width/2;
 		return abs(xt - x0) / *settings->width * *settings->timerange;
 	}
 
+	void setRangeGrabberByLength(float length){
+		float x0 = x-width/2;
+		float pixelLength = length / *settings->timerange * *settings->width;
+		timeRangeGrabber.x = pixelLength + x0 + timeRangeGrabber.width/2;
+	}
+
 	int getModi(){
 		int modi=0;
 		for(int i=0;i<modis.size();++i){
-			if(modis[i]->isClicked()){
+			if(modis[i]->bActive){
 				modi = i+1;
 			}
 		}
 		return modi;
+	}
+
+	void setModi(int modiSet){
+		for(int i=0;i<modis.size();++i){
+			if(modiSet-1==i){
+				modis[i]->bActive = true;
+			}else{
+				modis[i]->bActive = false;
+			}
+		}
+	}
+
+	void moveModis(float moveX){
+		for(int i=0;i<modis.size();++i){
+			modis[i]->x += moveX;
+		}
 	}
 
 	void startAnimation(ofEventArgs &e){
@@ -188,11 +218,21 @@ public:
 		ofPopStyle();
 	}
 
-	void saveToXml(ofxXmlSettings &  xml){
+	virtual void saveToXml(ofxXmlSettings &  xml){
 		xml.setValue("AnimationIdx",animationIdx);
 		xml.setValue("Modi",getModi());
 		xml.setValue("Start",calcStartTime());
 		xml.setValue("Length",getAnimationLength());
+	}
+
+	virtual void loadFromXml(ofxXmlSettings &  xml){
+		setModi(xml.getValue("Modi",0));
+		float start = xml.getValue("Start",0);
+		setPosXByStartTime(start);
+		moveModis(x);
+		calcStartTime();
+		float length = xml.getValue("Length",0);
+		setRangeGrabberByLength(length);
 	}
 
 };

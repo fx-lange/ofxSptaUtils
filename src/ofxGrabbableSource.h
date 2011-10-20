@@ -58,8 +58,13 @@ public:
 
 	virtual void saveToXml(ofxXmlSettings & xml){
 		ofxAnimationI::saveToXml(xml);
-		xml.setValue("Typ","SOURCE");
+		xml.setValue("Type","SOURCE");
 		ofxGrabbableVector::saveToXml(xml);
+	}
+
+	virtual void loadFromXml(ofxXmlSettings & xml){
+		ofxAnimationI::loadFromXml(xml);
+		ofxGrabbableVector::loadFromXml(xml);
 	}
 };
 

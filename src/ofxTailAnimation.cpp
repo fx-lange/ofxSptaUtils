@@ -210,7 +210,7 @@ void ofxTailAnimation::setAndArrangePoints(vector<ofPoint> points,bool close){
 	if(close){
 		ofVec3f & next = points[0];
 		float distance = drawPoint.distance(next);
-		while(distance>tmpStepSize){
+		while(distance>tmpStepSize && distance < 50){//TODO settings
 			drawPoint = (next-drawPoint).getNormalized()*tmpStepSize + drawPoint;
 			pts.push_back(drawPoint);
 			distance -= tmpStepSize;
