@@ -195,6 +195,14 @@ public:
 		}
 	}
 
+	virtual void setGrabbing(bool grabbing){
+		ofxGrabbableObject::setGrabbing(grabbing);
+		timeRangeGrabber.setGrabbing(grabbing);
+		for(int i=0;i<modis.size();++i){
+			modis[i]->setClicking(grabbing);
+		}
+	}
+
 	void draw(){
 		ofPushStyle();
 		ofEnableAlphaBlending();

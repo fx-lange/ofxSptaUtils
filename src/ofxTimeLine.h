@@ -12,7 +12,6 @@ protected:
 	vector<ofxTimeWindow*> timeWindows;
 	vector<ofxAnimationI *> animations;
 	TimeLineSettings settings;
-	ofxXmlSettings xml;
 
 	long startTime;
 
@@ -50,7 +49,6 @@ public:
 	float timerange;
 	float stepSize;
 	float lineHeight;
-	bool bShowAnimationObjects;
 
 	virtual void setup(float x,float y,float w,float h){
 		lineHeight = 30;
@@ -66,7 +64,6 @@ public:
 		settings.width = &(dropZone.width);
 		settings.height = &(dropZone.height);
 		settings.stepSize = &stepSize;
-		bShowAnimationObjects = true;
 	}
 
 	void update(){
@@ -112,11 +109,6 @@ public:
 		}
 		for(int i=0;i<timeWindows.size();++i){
 			timeWindows[i]->draw();
-		}
-		if(bShowAnimationObjects){
-			for(int i=0;i<animations.size();++i){
-				animations[i]->drawGUI();
-			}
 		}
 		ofPopStyle();
 	}
@@ -184,6 +176,7 @@ public:
 	}
 
 	void saveTrackToXml(){
+		ofxXmlSettings xml;
 		int tagNum;
 		//--- track details
 		tagNum = xml.addTag("TRACK");
@@ -221,7 +214,13 @@ public:
 		xml.popTag();
 		// --
 		xml.popTag();
-		xml.saveFile("track.xml");
+		string input;
+		cout << "Dateiname (ohne .xml):" << endl;
+		cin >> input;
+		string filename = "workspace/"+input+".xml";
+
+		xml.saveFile(filename);
+		cout << "Track gespeichert unter " << filename << endl;
 	}
 
 	void loadTrackFromXml(ofxXmlSettings & xml){

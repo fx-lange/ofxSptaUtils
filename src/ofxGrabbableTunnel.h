@@ -5,6 +5,7 @@
 #include "ofxGrabbablePolyline.h"
 #include "ofxAnimationI.h"
 #include "ParticleSystem.h"
+#include "SourceQ3.h"
 
 class ofxGrabbableTunnel : public ofxGrabbablePolyline, public ofxAnimationI{
 protected:
@@ -12,10 +13,11 @@ protected:
 	int modi;
 	ParticleSystem * particleSystem;
 public:
+	SettingSourceQ3 * settings;
 	float radius;
 	float scale;
 
-	virtual void setup(float rectSize,float radius, float scale,ParticleSystem * ps){
+	virtual void setup(float rectSize,float radius, float scale,ParticleSystem * ps,SettingSourceQ3 * settings){
 		ofxGrabbablePolyline::setup(rectSize);
 		this->radius = radius;
 		this->scale = scale;
@@ -28,6 +30,7 @@ public:
 		particleSystem = ps;
 		modi =0;
 		run = false;
+		this->settings = settings;
 	}
 
 	void setPoints(ofPolyline line,float simplyfyLevel){
@@ -64,7 +67,6 @@ public:
 	virtual void update(){//TODO werte in GUI
 		if(!run)
 			return;
-		cout << points.size() << endl;
         for(int i=0;i<points.size();++i){
         	ofxGrabbableVector * object = (ofxGrabbableVector*)points[i];
 			particleSystem->addDirectedForce(object->x, object->y, object->getRadius(), object->getVectorLength()/200,object->getNormVector());

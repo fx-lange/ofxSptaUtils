@@ -5,6 +5,8 @@
 #include "ofxGrabbableVector.h"
 #include "ofxAnimationI.h"
 #include "ParticleSystem.h"
+#include "ParticleQ3.h"
+#include "SourceQ3.h"
 
 class ofxGrabbableSource: public ofxGrabbableVector, public ofxAnimationI{
 	/**
@@ -16,24 +18,30 @@ protected:
 	bool run;
 	int modi;
 	ParticleSystem * particleSystem;
-	float calcRadius;
+	float calcRadius,calcArea;
 public:
-	virtual void setup(float x,float y, float w, float h,ParticleSystem * ps){
+	SettingSourceQ3 * settings;
+	virtual void setup(float x,float y, float w, float h,ParticleSystem * ps,SettingSourceQ3 * settings){
 		ofxGrabbableVector::setup(x,y,w,h);
 		timeGrabber.setup(x+50,y,15,15);//TODO gui / auslagern
 		timeGrabber.color.set(20,240,30);
 		timeGrabber.fillMe = true;
+		visible.setup(x+50+w,y,w,h);
+		visible.bActive = true;
+		visible.color.set(20,240,30);
 		color.set(20,240,30,180);
 		colorHover.set(20,240,30,255);
 		particleSystem = ps;
 		run = false;
 		modi = 0;
+		this->settings = settings;
 	}
 
 	virtual void start(int modi = 0){
 		cout << "startet mit modi: " << modi << endl;
 		this->modi = modi;
 		calcRadius = getRadius();
+		calcArea = PI * calcRadius * calcRadius;
 		run = true;
 	}
 
@@ -41,19 +49,29 @@ public:
 		run = false;
 	}
 
-	virtual void update();//TODO radius und zeit für bestimmung wie oft und wieviele!!!
+	virtual void update();
 
 	virtual void drawGUI(){
-		ofxGrabbableVector::draw();
-		timeGrabber.draw();
+		ofxAnimationI::drawGUI();
+		if(visible.bActive){
+			ofxGrabbableVector::draw();
+			setGrabbingRest(visible.isGrabbingEnabled());
+		}else{
+			setGrabbingRest(false);
+		}
 	}
 
 	virtual void drawAnimation(){}//TODO nothing?!
-	virtual int getModiCount(){ return 2; }//TODO !!
+	virtual int getModiCount(){ return 2; }
 
 	virtual void setGrabbing(bool bGrabbing){
+		visible.setGrabbing(bGrabbing);
+		setGrabbingRest(bGrabbing);
+	}
+
+	void setGrabbingRest(bool bGrabbing){
+		ofxAnimationI::setGrabbing(bGrabbing);
 		bGrabbingEnabled = bGrabbing;
-		timeGrabber.setGrabbing(bGrabbing);
 	}
 
 	virtual void saveToXml(ofxXmlSettings & xml){

@@ -146,6 +146,11 @@ public:
 		marker.setGrabbing(grabbing);
 	}
 
+	void setClicking(bool grabbing){
+		marker.setClicking(grabbing);
+	}
+
+
 	virtual void saveToXml(ofxXmlSettings & xml){
 
 		xml.addTag("Marker");

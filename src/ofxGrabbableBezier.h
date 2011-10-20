@@ -128,8 +128,12 @@ public:
 		setBezierGrabbing(bGrabbing);
 	}
 
+	virtual void setClicking(bool clickable){
+		marker.setClicking(clickable);
+	}
+
 	void setBezierGrabbing(bool bGrabbing){
-		start.setGrabbing(bGrabbing);
+		start.setGrabbing(bGrabbing && curve.size()<=0);
 		end.setGrabbing(bGrabbing);
 		p1.setGrabbing(bGrabbing);
 		p2.setGrabbing(bGrabbing);

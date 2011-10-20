@@ -4,6 +4,7 @@
 #include "ofMain.h"
 #include "ofxAnimationI.h"
 #include "ofxGrabbableObject.h"
+#include "SourceQ3.h"
 
 class ofxTailAnimation : public ofxGrabbableObject, public ofxAnimationI{
 protected:
@@ -24,8 +25,8 @@ protected:
 	virtual void setup(float stepSize);
 
 public:
-
-	virtual void setup(float x,float y,float w, float h, float stepSize=1){
+	SettingSourceQ3 * settings;
+	virtual void setup(float x,float y,float w, float h,SettingSourceQ3 * settings, float stepSize=1){
 		ofxGrabbableObject::setup(x,y,w,h);
 		setup(stepSize);
 		timeGrabber.setup(x+50,y+50,w,h);
@@ -35,6 +36,7 @@ public:
 		visible.color.set(255,255,0);
 		color.set(255,255,0);
 		timeGrabber.fillMe = true;
+		this->settings = settings;
 	}
 
 	virtual void drawGUI();

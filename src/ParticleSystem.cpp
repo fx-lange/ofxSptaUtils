@@ -298,10 +298,10 @@ void ParticleSystem::update() {
 
 void ParticleSystem::draw() {
 	int n = particles.size();
-	glPointSize(2);
-	glBegin(GL_POINTS);
+//	glPointSize(2);
+//	glBegin(GL_POINTS);
 	for (int i = 0; i < n; i++)
 		particles[i]->draw();
 //      testFont.drawString("bla", particles[i].x, particles[i].y);
-	glEnd();
+//	glEnd();
 }

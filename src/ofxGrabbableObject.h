@@ -214,6 +214,7 @@ public:
 
 class toggleButton:public ofxGrabbableObject{//TODO vererbung hier krasses overhead - nach Q3 aufräumen!
 protected:
+	bool bClickable;
 public:
 	float resetY;
 	bool bActive;
@@ -221,12 +222,13 @@ public:
 		ofxGrabbableObject::setup(x,y,w,h);
 //		unregisterGrabbing(); war nur für timewindow sinnvoll
 		resetY = y;
+		bClickable = true;
 	}
 
 	virtual void mousePressed(ofMouseEventArgs &e){
 		ofxGrabbableObject::mousePressed(e);
 
-		if (!isOver(e.x, e.y)){
+		if (!isOver(e.x, e.y) || !bClickable){
 			return;
 		}
 		bActive = !bActive;
@@ -235,6 +237,10 @@ public:
 	virtual void draw(){
 		fillMe = bActive;
 		ofxGrabbableObject::draw();
+	}
+
+	virtual void setClicking(bool clickable){
+		bClickable = clickable;
 	}
 };
 
