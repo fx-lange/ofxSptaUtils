@@ -19,8 +19,8 @@ public:
 
 	virtual void setup(float rectSize,float radius, float scale,ParticleSystem * ps,SettingSourceQ3 * settings){
 		ofxGrabbablePolyline::setup(rectSize);
-		this->radius = radius;
-		this->scale = scale;
+		this->radius = settings->radiusFT;
+		this->scale = settings->scaleFT;
 		timeGrabber.setup(50,350,15,15);//TODO gui / auslagern
 		timeGrabber.color.set(255,0,0);
 		timeGrabber.fillMe = true;
@@ -34,8 +34,8 @@ public:
 		tx = ty = 0;
 	}
 
-	void setPoints(ofPolyline line,float simplyfyLevel){
-		line.simplify(simplyfyLevel);
+	void setPoints(ofPolyline line){
+		line.simplify(settings->simplifyLevel);
 		for (int i = 0; i < line.size() - 1 ; i++) {
 			addVertex(line[i],&(line[i+1]));
 		}
@@ -65,12 +65,12 @@ public:
 	virtual void stop(){
 		run = false;
 	}
-	virtual void update(){//TODO werte in GUI
+	virtual void update(){
 		if(!run)
 			return;
         for(int i=0;i<points.size();++i){
         	ofxGrabbableVector * object = (ofxGrabbableVector*)points[i];
-			particleSystem->addDirectedForce(object->x+tx, object->y+ty, object->getRadius(), object->getVectorLength()/200,object->getNormVector());
+			particleSystem->addDirectedForce(object->x+tx, object->y+ty, object->getRadius(), object->getVectorLength()*settings->forceFactor,object->getNormVector());
         }
 	}
 	virtual void drawGUI(){
@@ -89,8 +89,8 @@ public:
 		ofPopMatrix();
 		ofPopStyle();
 	}
-	virtual void drawAnimation(){}//TODO nothing!
-	virtual int getModiCount(){ return 2; }//TODO
+	virtual void drawAnimation(){}
+	virtual int getModiCount(){ return 1; }
 	virtual void setGrabbing(bool grabbing){
 		visible.setGrabbing(grabbing);
 		setGrabbingRest(grabbing);

@@ -31,7 +31,7 @@ protected:
 		}
 	}
 public:
-	vector<toggleButton*> modis;//TODO
+	vector<toggleButton*> modis;
 	ofxGrabbableYFix timeRangeGrabber;
 	bool bDeleteMe;
 	virtual ~ofxTimeWindow(){
@@ -46,7 +46,7 @@ public:
 		calcY += 0.5*calcH;
 		int modiCount = animation->getModiCount()-1;
 		buttonSize = 0.65 * h;
-		float calcW = calcH + (modiCount * buttonSize*1.1);//TODO abhängig von Anzahl der Modi
+		float calcW = calcH + (modiCount * buttonSize*1.1);
 
 		//init & settings
 		ofxGrabbableObject::setup(x,calcY,calcH,calcH);
@@ -90,7 +90,7 @@ public:
 		float w = *(settings->width);
 		float range = *(settings->timerange);
 		float time = (x - x0 - width/2) / w * range;
-		timer.setTimer(time*1000);//TODO -tl->x);
+		timer.setTimer(time*1000);
 		cout << "set timer to: " << time <<  "s" << endl;
 		timer.stopTimer();
 		return time;

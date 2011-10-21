@@ -43,6 +43,9 @@ public:
 		return &timeGrabber;
 	}
 	virtual int getModiCount(){ return 1; }
+	virtual ofColor getColor(){
+		return timeGrabber.color;
+	}
 	virtual void setGrabbing(bool bGrabbing){
 		timeGrabber.setGrabbing(bGrabbing);
 //		visible.setGrabbing(bGrabbing);

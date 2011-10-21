@@ -141,10 +141,11 @@ void ofxTailAnimation::drawTail(){
 	if (run) {
 		idx = (idx+1)%size;
 	} else {
-		if (idx<size-1) {
+//		if (idx<size-1) {
+		if (idx!=startIdx) {
 			idx = (idx+1)%size;
-		}
-		if (tailIdx<size-1) {
+			tailIdx = (tailIdx+1)%size;
+		}else if(tailIdx!=startIdx) {
 			tailIdx = (tailIdx+1)%size;
 		} else {
 			runEnd = false;
@@ -224,7 +225,7 @@ void ofxTailAnimation::drawAnimation(){
 	ofPopStyle();
 }
 
-void ofxTailAnimation::setAndArrangePoints(vector<ofPoint> points,bool close){
+void ofxTailAnimation::setAndArrangePoints(vector<ofPoint> points){
 	if(points.size()<=0)
 		return;
 	size = points.size();
@@ -250,10 +251,10 @@ void ofxTailAnimation::setAndArrangePoints(vector<ofPoint> points,bool close){
 		}
 	}
 	//schliessen
-	if(close){
+	if(settings->bCloseTail){
 		ofVec3f & next = points[0];
 		float distance = drawPoint.distance(next);
-		while(distance>tmpStepSize && distance < 50){//TODO settings
+		while(distance>tmpStepSize && distance < settings->maxCircleDistance){
 			drawPoint = (next-drawPoint).getNormalized()*tmpStepSize + drawPoint;
 			pts.push_back(drawPoint);
 			distance -= tmpStepSize;

@@ -11,11 +11,15 @@ class ofxTimeLine : public ofxGrabbableObject{
 protected:
 	vector<ofxTimeWindow*> timeWindows;
 	vector<ofxAnimationI *> animations;
+	vector<ofColor> colors;
 	TimeLineSettings settings;
+	bool checkTimeGrabber;
 
 	long startTime;
 
 	void checkAnimations(){
+		if(!checkTimeGrabber)
+			return;
 		for(int i=0;i<animations.size();i++){
 			ofxGrabbableObject * obj = animations[i]->getTimeGrabber();
 			if(dropZone.inside(obj->x,obj->y) && obj->isPressed() == false){
@@ -50,21 +54,25 @@ public:
 	float timerange;
 	float stepSize;
 	float lineHeight;
+	float lineCount;
 
 	virtual void setup(float x,float y,float w,float h){
 		lineHeight = 30;
-		h = round(h/lineHeight)*lineHeight;
+		lineCount = round(h/lineHeight);
+		cout << "linecount: " << lineCount << endl;
+		h = lineCount*lineHeight;
 		y = ofGetHeight()-h;
 		ofxGrabbableObject::setup(x,y,20,20);
+		bGrabbingEnabled = false;
 		dropZone.set(x,y,w,h);
 		timerange = 300;
-		stepSize = 15;
 		settings.x0 = &(dropZone.x);
 		settings.y0 =&(dropZone.y);
 		settings.timerange = &timerange;
 		settings.width = &(dropZone.width);
 		settings.height = &(dropZone.height);
 		settings.stepSize = &stepSize;
+		checkTimeGrabber = false;
 	}
 
 	void update(){
@@ -94,6 +102,18 @@ public:
 		for(int yi=dropZone.y;yi<dropZone.y+dropZone.height;yi+=(int)lineHeight){
 			ofLine(dropZone.x,yi,dropZone.width+dropZone.x,yi);
 		}
+		for(int i=0;i<animations.size();i++){
+			ofPushStyle();
+			ofSetColor(colors[i]);
+			ofSetRectMode(OF_RECTMODE_CENTER);
+			float yy = y+dropZone.height-lineHeight*(i+0.5);
+			ofxGrabbableObject * timegrabber = animations[i]->getTimeGrabber();
+
+			ofRect(10,yy,5,5);
+			ofSetColor(255);
+			ofLine(10,yy,timegrabber->x,timegrabber->y);
+			ofPopStyle();
+		}
 		ofDisableAlphaBlending();
 		//ticks
 		float tickSize = dropZone.width / timerange;
@@ -116,10 +136,16 @@ public:
 
 	void addAnimation(ofxAnimationI * animation){
 		animations.push_back(animation);
+		colors.push_back(animation->getColor());
+		if(animations.size()>lineCount){
+			lineCount++;
+			y-=lineHeight;
+			dropZone.y -= lineHeight;
+			dropZone.height += lineHeight;
+		}
 	}
 
 	void startAnimations(){
-		//TODO offset mit eigenem timer
 		for(int i=0;i<timeWindows.size();++i){
 			timeWindows[i]->startTimer();
 		}
@@ -127,7 +153,6 @@ public:
 	}
 
 	void stopAnimations(){
-		//TODO offset mit eigenem timer
 		for(int i=0;i<timeWindows.size();++i){
 			timeWindows[i]->stopTimer();
 		}
@@ -168,11 +193,17 @@ public:
 
 	virtual void setGrabbing(bool bGrabbing){
 		bGrabbingEnabled = bGrabbing;
-		for(int i=0;i<timeWindows.size();++i){
-			timeWindows[i]->setGrabbing(bGrabbing);
-		}
+
 		for(int i=0;i<animations.size();++i){
 			animations[i]->setGrabbing(bGrabbing);
+		}
+		setTimeWindowGrabbing(bGrabbing);
+	}
+
+	virtual void setTimeWindowGrabbing(bool bGrabbing){
+		checkTimeGrabber = bGrabbing;
+		for(int i=0;i<timeWindows.size();++i){
+			timeWindows[i]->setGrabbing(bGrabbing);
 		}
 	}
 
@@ -185,7 +216,7 @@ public:
 		return max;
 	}
 
-	void saveTrackToXml(){
+	void saveTrackToXml(string filename){
 		ofxXmlSettings xml;
 		int tagNum;
 		//--- track details
@@ -194,7 +225,6 @@ public:
 		xml.pushTag("TRACK",tagNum);
 		xml.addTag("Details");
 		xml.pushTag("Details");
-		//TODO länge des tracks - minimal letztes ende einer animation
 		xml.setValue("Length",getTrackLength());
 		xml.popTag();
 
@@ -224,10 +254,7 @@ public:
 		xml.popTag();
 		// --
 		xml.popTag();
-		string input;
-		cout << "Dateiname (ohne .xml):" << endl;
-		cin >> input;
-		string filename = "workspace/"+input+".xml";
+
 
 		xml.saveFile(filename);
 		cout << "Track gespeichert unter " << filename << endl;
@@ -237,11 +264,6 @@ public:
 		int tagNum;
 		//--- track details
 		xml.pushTag("TRACK");
-		xml.pushTag("Details");
-		//TODO länge des tracks - minimal letztes ende einer animation
-//		xml.setValue("Length",0);
-		xml.popTag();
-
 		//--- load animations
 		//schon in app
 		// --
@@ -257,6 +279,7 @@ public:
 			tw->setTimer(&settings);
 			tw->loadFromXml(xml);
 			tw->setAnimationIdx(aIdx);
+			tw->setGrabbing(false);
 			timeWindows.push_back(tw);
 			xml.popTag();
 		}

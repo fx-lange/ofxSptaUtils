@@ -26,13 +26,16 @@ protected:
 
 	void calcNearest();
 	virtual void setup(float stepSize);
+	void setTailLength(float tailLength){
+		this->tailLength = round(tailLength/stepSize);
+	}
 
 public:
 	int startIdx;
 	SettingSourceQ3 * settings;
-	virtual void setup(float x,float y,float w, float h,SettingSourceQ3 * settings, float stepSize=1){
+	virtual void setup(float x,float y,float w, float h,SettingSourceQ3 * settings){
 		ofxGrabbableObject::setup(x,y,w,h);
-		setup(stepSize);
+		setup(settings->tailResolution);
 		timeGrabber.setup(x+50,y+50,w,h);
 		timeGrabber.color.set(255,255,0);
 		visible.setup(x+50+w,y+50,w,h);
@@ -50,32 +53,30 @@ public:
 
 	virtual void start(int modi = 0){
 		cout << "startet mit modi: " << modi << endl;
-//<<<<<<< HEAD
 		reset();
 		run = true;
 		runEnd=false;
-//=======
-//		reset();
-//>>>>>>> 9e200ee393a64a31719fd509b5f97a679355a817
 		this->modi=modi;
+		tailLength = settings->tailLength / stepSize;
 	}
 
 	virtual void stop(){
+		if(run == false)
+			return;
 		run = false;
 		runEnd=true;
 	}
 
 	virtual int getModiCount(){ return 3; }
 
-	virtual void update(){}
+	virtual void update(){
+	}
 
 	virtual void drawAnimation();
 
-	void setTailLength(float tailLength){
-		this->tailLength = round(tailLength/stepSize);
-	}
 
-	void setAndArrangePoints(vector<ofPoint> points,bool close=true);
+
+	void setAndArrangePoints(vector<ofPoint> points);
 
 	void reset(){
 		tailIdx = idx = startIdx;
