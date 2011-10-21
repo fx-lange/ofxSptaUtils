@@ -136,6 +136,12 @@ public:
 		}
 	}
 
+	float getEndTime(){
+		float start = calcStartTime();
+		float length = getAnimationLength();
+		return start + length;
+	}
+
 	void moveModis(float moveX){
 		for(int i=0;i<modis.size();++i){
 			modis[i]->x += moveX;

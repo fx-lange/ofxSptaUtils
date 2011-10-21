@@ -44,6 +44,7 @@ protected:
 		}
 	}
 
+
 public:
 	ofRectangle dropZone;
 	float timerange;
@@ -175,6 +176,15 @@ public:
 		}
 	}
 
+	float getTrackLength(){
+		float max = 0;
+		for(int i=0;i<timeWindows.size();++i){
+			float end = timeWindows[i]->getEndTime();
+			max = end > max ? end : max;
+		}
+		return max;
+	}
+
 	void saveTrackToXml(){
 		ofxXmlSettings xml;
 		int tagNum;
@@ -185,7 +195,7 @@ public:
 		xml.addTag("Details");
 		xml.pushTag("Details");
 		//TODO länge des tracks - minimal letztes ende einer animation
-		xml.setValue("Length",0);
+		xml.setValue("Length",getTrackLength());
 		xml.popTag();
 
 		//--- save animations
