@@ -12,7 +12,7 @@ void ofxTailAnimation::drawGUI(){
 		ofLine(x,y,pts[startIdx].x,pts[startIdx].y);
 		ofLine(timeGrabber,*this);
 		ofSetColor(100);
-		if(!run){
+		if(!run && !runEnd){
 			ofEllipse(pts[idx],10,10);
 			idx = (idx+1)%size;
 		}
@@ -45,23 +45,60 @@ void ofxTailAnimation::setColorEffect(int i,int now){
 
 
 void ofxTailAnimation::drawFull(){
+	/*
+	ofSetColor(255, 255, 255,200);
+	ofEllipse(pts[idx],20,20);
+	ofSetColor(255, 0, 255,200);
+	ofEllipse(pts[tailIdx],20,20);
+	*/
 	
+	
+	if (tailIdx>=idx && started) {
+		for(int i=tailIdx;i<pts.size()-1;i++){
+			ofSetColor(255, 255, 255);
+			ofLine(pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y);
+		}
+		for(int i=0;i<idx;i++){
+			ofSetColor(255, 255, 255);
+			ofLine(pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y);
+		}
+	} else {
+		for(int i=tailIdx;i<idx;i++){
+			ofSetColor(255, 255, 255);
+			ofLine(pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y);
+		}
+		started = true;
+	}
 		
-	for(int i=tailIdx;i<idx;i++){
-		ofSetColor(255, 255, 255);
-		ofLine(pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y);
+	if (run) {
+		if(!looped){
+			idx = (idx+1)%size; 
+		}
+		if (!looped && idx==startIdx) {
+			looped=true;
+			cout << "looped" << endl;
+		}
 	}
 	
+	if(runEnd){
+		tailIdx=(tailIdx+1)%size;
+		if(tailIdx==startIdx-1){
+			runEnd=false;
+		}
+	}
+	
+	/*
 	if(idx<size-1 && run){
 		idx = (idx+1)%size;
 	}
 	if(runEnd){
-		cout << tailIdx << endl;
+		//cout << tailIdx << endl;
 		tailIdx=(tailIdx+1)%size;
 		if(tailIdx==size-1){
 			runEnd=false;
 		}
 	}
+	 */
 	
 	
 }	
@@ -77,7 +114,7 @@ void ofxTailAnimation::drawTail(){
 	
 	
 	if(tailIdx>idx){
-		for(int i=startIdx;i<idx;i++){
+		for(int i=0;i<idx;i++){
 			setColorEffect(i,idx-i);
 			ofLine(pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y);
 		}
@@ -93,8 +130,6 @@ void ofxTailAnimation::drawTail(){
 		}
 	}
 	
-
-	
 	if(abs(idx-tailIdx)>tailLength && !(tailIdx<size-1 && runEnd)){
 		tailIdx = (tailIdx+1)%size;
 	}
@@ -108,6 +143,8 @@ void ofxTailAnimation::drawTail(){
 		}
 		if (tailIdx<size-1) {
 			tailIdx = (tailIdx+1)%size;
+		} else {
+			runEnd = false;
 		}
 	}
 
@@ -163,6 +200,7 @@ void ofxTailAnimation::drawTailMulti(){
 
 
 void ofxTailAnimation::drawAnimation(){
+	ofPushStyle();
 	ofSetLineWidth(5);
 	
 	
@@ -175,10 +213,9 @@ void ofxTailAnimation::drawAnimation(){
 			drawTailMulti();
 		}
 		
-		
+		//sidx++;
 	}
-	ofSetLineWidth(1);
-	ofSetColor(255, 255, 255);
+	ofPopStyle();
 }
 
 void ofxTailAnimation::setAndArrangePoints(vector<ofPoint> points,bool close){
