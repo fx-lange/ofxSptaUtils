@@ -48,12 +48,10 @@ void ofxTailAnimation::setColorEffect(int i,int now){
 
 
 void ofxTailAnimation::drawFull(){
-	/*
 	ofSetColor(255, 255, 255,200);
 	ofEllipse(pts[idx],20,20);
 	ofSetColor(255, 0, 255,200);
 	ofEllipse(pts[tailIdx],20,20);
-	*/
 	
 	
 	if (tailIdx>=idx && started) {
@@ -85,11 +83,12 @@ void ofxTailAnimation::drawFull(){
 	
 	if(runEnd){
 		tailIdx=(tailIdx+1)%size;
-		if(tailIdx==startIdx-1){
+		if(tailIdx==((startIdx-1)%size+size)%size){
 			runEnd=false;
 		}
 	}
 	
+
 	/*
 	if(idx<size-1 && run){
 		idx = (idx+1)%size;
