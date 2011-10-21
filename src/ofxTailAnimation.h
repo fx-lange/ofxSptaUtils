@@ -43,6 +43,7 @@ public:
 		this->settings = settings;
 		looped=false;
 		started=false;
+		tx = ty = 0;
 	}
 
 	virtual void drawGUI();
@@ -50,7 +51,7 @@ public:
 	virtual void start(int modi = 0){
 		cout << "startet mit modi: " << modi << endl;
 //<<<<<<< HEAD
-//		reset();
+		reset();
 		run = true;
 		runEnd=false;
 //=======
@@ -63,6 +64,8 @@ public:
 		run = false;
 		runEnd=true;
 	}
+
+	virtual int getModiCount(){ return 3; }
 
 	virtual void update(){}
 

@@ -3,6 +3,8 @@
 void ofxTailAnimation::drawGUI(){
 	ofPushStyle();
 	ofxAnimationI::drawGUI();
+	ofPushMatrix();
+	ofTranslate(tx,ty);
 
 	if(size>3 && visible.bActive){
 		if(bClicked){
@@ -14,7 +16,7 @@ void ofxTailAnimation::drawGUI(){
 		ofSetColor(100);
 		if(!run && !runEnd){
 			ofEllipse(pts[idx],10,10);
-			idx = (idx+1)%size;
+//			idx = (idx+1)%size;
 		}
 		ofSetColor(255,0,0);
 		ofNoFill();
@@ -33,6 +35,7 @@ void ofxTailAnimation::drawGUI(){
 	ofSetRectMode(OF_RECTMODE_CENTER);
 	ofRect(x,y,width,height);
 	ofDisableAlphaBlending();
+	ofPopMatrix();
 	ofPopStyle();
 }
 
@@ -202,7 +205,8 @@ void ofxTailAnimation::drawTailMulti(){
 void ofxTailAnimation::drawAnimation(){
 	ofPushStyle();
 	ofSetLineWidth(5);
-	
+	ofPushMatrix();
+	ofTranslate(tx,ty);
 	
 	if(size>3  && (run || runEnd)){
 		if (modi==0) {
@@ -215,6 +219,8 @@ void ofxTailAnimation::drawAnimation(){
 		
 		//sidx++;
 	}
+
+	ofPopMatrix();
 	ofPopStyle();
 }
 

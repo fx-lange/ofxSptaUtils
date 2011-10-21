@@ -9,15 +9,25 @@
 /*	Eventinterface
  *
  */
+
+//TODO benötigt auch ne setup - nach Q3
 class ofxAnimationI {
 protected:
 	ofxGrabbableObject timeGrabber;
 	toggleButton visible;
+	float tx,ty;
 public:
+	virtual void setTranslation(float tx, float ty){
+		this->tx = tx;
+		this->ty = ty;
+	}
+
 	virtual void start(int modi = 0) = 0;
 	virtual void stop() = 0;
 	virtual void update() = 0;
 	virtual void drawGUI(){
+		ofPushMatrix();
+		ofTranslate(tx,ty);
 		ofPushStyle();
 		ofNoFill();
 		timeGrabber.draw();
@@ -25,13 +35,14 @@ public:
 			ofFill();
 		ofSetColor(visible.color);
 		ofEllipse(visible,visible.width,visible.height);
+		ofPopMatrix();
 		ofPopStyle();
 	}
 	virtual void drawAnimation() = 0;
 	virtual ofxGrabbableObject * getTimeGrabber(){
 		return &timeGrabber;
 	}
-	virtual int getModiCount(){ return 2; }//TODO auf = 0
+	virtual int getModiCount(){ return 1; }
 	virtual void setGrabbing(bool bGrabbing){
 		timeGrabber.setGrabbing(bGrabbing);
 //		visible.setGrabbing(bGrabbing);

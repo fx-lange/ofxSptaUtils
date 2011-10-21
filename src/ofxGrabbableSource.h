@@ -35,6 +35,7 @@ public:
 		run = false;
 		modi = 0;
 		this->settings = settings;
+		tx = ty = 0;
 	}
 
 	virtual void start(int modi = 0){
@@ -53,12 +54,15 @@ public:
 
 	virtual void drawGUI(){
 		ofxAnimationI::drawGUI();
+		ofPushMatrix();
+		ofTranslate(tx,ty);
 		if(visible.bActive){
 			ofxGrabbableVector::draw();
 			setGrabbingRest(visible.isGrabbingEnabled());
 		}else{
 			setGrabbingRest(false);
 		}
+		ofPopMatrix();
 	}
 
 	virtual void drawAnimation(){}//TODO nothing?!

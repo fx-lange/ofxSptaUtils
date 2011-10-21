@@ -31,6 +31,7 @@ public:
 		modi =0;
 		run = false;
 		this->settings = settings;
+		tx = ty = 0;
 	}
 
 	void setPoints(ofPolyline line,float simplyfyLevel){
@@ -69,12 +70,14 @@ public:
 			return;
         for(int i=0;i<points.size();++i){
         	ofxGrabbableVector * object = (ofxGrabbableVector*)points[i];
-			particleSystem->addDirectedForce(object->x, object->y, object->getRadius(), object->getVectorLength()/200,object->getNormVector());
+			particleSystem->addDirectedForce(object->x+tx, object->y+ty, object->getRadius(), object->getVectorLength()/200,object->getNormVector());
         }
 	}
 	virtual void drawGUI(){
 		ofPushStyle();
 		ofxAnimationI::drawGUI();
+		ofPushMatrix();
+		ofTranslate(tx,ty);
 		if(visible.bActive){
 			ofSetColor(255,255,255,100);
 			ofLine(timeGrabber,*points[0]);
@@ -83,6 +86,7 @@ public:
 		}else{
 			setGrabbingRest(false);
 		}
+		ofPopMatrix();
 		ofPopStyle();
 	}
 	virtual void drawAnimation(){}//TODO nothing!
