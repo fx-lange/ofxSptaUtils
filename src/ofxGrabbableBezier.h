@@ -56,6 +56,7 @@ public:
 	void draw(){
 		ofPushStyle();
 		ofSetColor(255);
+		ofSetLineWidth(5);
 		curve.draw();
 		if(curve.size()>0){
 			ofPushStyle();

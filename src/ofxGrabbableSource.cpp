@@ -24,10 +24,17 @@ void ofxGrabbableSource::update(){//TODO radius und zeit für bestimmung wie oft
 		do{
 			p = (ParticleQ3*)particleSystem->getNext();
 		}while(!p->bFree);
-		float px = ofRandom(-calcRadius,calcRadius) + x;//TODO es entsteht ein rechteck kein kreis
-		float py = ofRandom(-calcRadius,calcRadius) + y;
-		p->x = px+tx;
-		p->y = py+ty;
+		float alpha = ofRandom(0,360);
+	    ofVec3f v(0,1);
+	    v.rotate(alpha,ofVec3f(0,0,1));
+	    if(modi==1){
+	    	v.scale(calcRadius);
+	    }else{
+	    	v.scale(ofRandom(0,calcRadius));
+	    }
+	    v += *this;
+		p->x = v.x+tx;
+		p->y = v.y+ty;
 		p->setFree(false);
 		p->setMode(alphaStep,getVectorLength(),radius);
 		p->xv = p->yv = 0;

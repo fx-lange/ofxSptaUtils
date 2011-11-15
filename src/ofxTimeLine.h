@@ -145,7 +145,25 @@ public:
 		}
 	}
 
+	void removeLastAnimation(){
+		ofxAnimationI * animation = animations[animations.size()-1];
+		vector<ofxTimeWindow*>::iterator it = timeWindows.begin();
+		while(it!=timeWindows.end()){
+			ofxTimeWindow * tw = *it;
+			cout << "Window " ;
+			if(tw->getAnimation() == animation){
+				it = timeWindows.erase(it);
+			}else{
+				it++;
+			}
+		}
+		animations.pop_back();
+//		cout << "delete animation" << endl;
+//		delete animation; TODO leak?!
+	}
+
 	void startAnimations(){
+		cout << "starte animations timer" << endl;
 		for(int i=0;i<timeWindows.size();++i){
 			timeWindows[i]->startTimer();
 		}
@@ -153,6 +171,7 @@ public:
 	}
 
 	void stopAnimations(){
+		cout << "stoppe animationen" << endl;
 		for(int i=0;i<timeWindows.size();++i){
 			timeWindows[i]->stopTimer();
 		}

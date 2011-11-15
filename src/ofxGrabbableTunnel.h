@@ -57,7 +57,7 @@ public:
 		points.push_back(go);
 	}
 	virtual void start(int modi = 0){
-		cout << "startforce tunnel" << endl;
+//		cout << "startforce tunnel" << endl;
 		run = true;
 		this->modi = modi;
 	}

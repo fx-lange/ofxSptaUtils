@@ -39,7 +39,7 @@ public:
 	}
 
 	virtual void start(int modi = 0){
-		cout << "startet mit modi: " << modi << endl;
+//		cout << "startet mit modi: " << modi << endl;
 		this->modi = modi;
 		calcRadius = getRadius();
 		calcArea = PI * calcRadius * calcRadius;

@@ -223,6 +223,7 @@ public:
 //		unregisterGrabbing(); war nur für timewindow sinnvoll
 		resetY = y;
 		bClickable = true;
+		bActive = false;
 	}
 
 	virtual void mousePressed(ofMouseEventArgs &e){

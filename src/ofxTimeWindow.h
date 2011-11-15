@@ -85,6 +85,10 @@ public:
 		animationIdx = idx;
 	}
 
+	ofxAnimationI * getAnimation(){
+		return animation;
+	}
+
 	float calcStartTime(){
 		float x0 = *(settings->x0);
 		float w = *(settings->width);
@@ -159,7 +163,7 @@ public:
 	}
 
 	void stopAnimation(ofEventArgs &e){
-		cout << "stop animation" << endl;
+//		cout << "stop animation" << endl;
 		animation->stop();
 	}
 

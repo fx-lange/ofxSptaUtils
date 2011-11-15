@@ -52,7 +52,7 @@ public:
 	virtual void drawGUI();
 
 	virtual void start(int modi = 0){
-		cout << "startet mit modi: " << modi << endl;
+//		cout << "startet mit modi: " << modi << endl;
 		reset();
 		run = true;
 		runEnd=false;
