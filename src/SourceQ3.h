@@ -10,6 +10,7 @@ struct SettingSourceQ3{
 	float tailLength,tailResolution;//TODO evtl als voreisntellung
 	float maxCircleDistance;
 	bool bCloseTail;
+	float lineWidth;
 	//resolution des tails & maxcircle <- fix
 	//tailLength dynamisch
 

@@ -9,10 +9,31 @@ public:
 	float xv, yv;
 	float xf, yf;
 
+	float alpha;
+	bool bFree;
+
 	Particle(float _x = 0, float _y = 0, float _xv = 0, float _yv = 0) :
 			x(_x), y(_y), xv(_xv), yv(_yv) {
+		bFree = true;
+		alpha = 0;
 	}
+
+	virtual ~Particle(){
+
+	}
+
+	virtual void setFree(bool free){
+		bFree = free;
+		if(bFree){
+			alpha = 0;
+		}else{
+//			cout << "particle reserved" << endl;
+		}
+	}
+
 	virtual void updatePosition(float timeStep) {
+		if(free)
+			return;
 		// f = ma, m = 1, f = a, v = int(a)
 		xv += xf;
 		yv += yf;
@@ -23,7 +44,11 @@ public:
 		xf = 0;
 		yf = 0;
 	}
-	void bounceOffWalls(float left, float top, float right, float bottom, float damping = .3) {
+	virtual bool bounceOffWalls(float left, float top, float right, float bottom, float damping = .3) {
+		if(bFree){
+			return false;
+		}
+
 		bool collision = false;
 
 		if (x > right) {
@@ -49,15 +74,18 @@ public:
 			xv *= damping;
 			yv *= damping;
 		}
+		return collision;
 	}
 	void addDampingForce(float timeStep, float damping = .01) {
 		xf = xf - xv * damping;
 		yf = yf - yv * damping;
 	}
-	virtual void draw() {
+	virtual void draw(float grey = 255) {
+		if(bFree){
+			return;
+		}
+		ofSetColor(grey,grey,grey,alpha);
 		glVertex2f(x, y);
-//		ofEllipse(x, y, 6, 6);
-
 	}
 };
 

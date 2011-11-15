@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Particle.h"
+#include "ParticleQ3.h"
 
 #define DRAW_FORCES
 #define USE_INVSQRT
@@ -38,17 +39,49 @@ public:
 	void addForce(const Particle& particle, float radius, float scale);
 	void addForce(float x, float y, float radius, float scale);
 	void addDirectedForce(float x, float y, float radius, float scale, const ofVec3f & direction);
-	void update();
+	virtual void update();
 
-	void draw();
+	virtual void draw();
+
+	void freeAllParticles();
 };
 
-//inline float InvSqrt(float x) {
-//	float xhalf = 0.5f * x;
-//	int i = *(int*) &x; // store floating-point bits in integer
-//	i = 0x5f3759d5 - (i >> 1); // initial guess for Newton's method
-//	x = *(float*) &i; // convert new bits into float
-//	x = x * (1.5f - xhalf * x * x); // One round of Newton's method
-//	return x;
-//}
+class ParticleSystemQ3 : public ParticleSystem{
+public:
+	virtual void update(float radius = -10){
+		int n = particles.size();
+		for (int i = 0; i < n; i++){
+			ParticleQ3 * pQ3 = (ParticleQ3*)particles[i];
+			pQ3->updatePosition(timeStep);
+			if(radius>-10)
+				pQ3->d = pQ3->initD = radius*2;
+			if(pQ3->bFree)
+				free++;
+		}
+		if(free < 1000){
+			cout << "WARNING - PARTICLE LEAK - FREE ALL!" << endl;
+			freeAllParticles();
+		}
+	}
+
+	void boost(float input,float percent) {
+		int n = particles.size();
+		for (int i = 0; i < n; i++){
+			ParticleQ3 * pQ3 = (ParticleQ3*)particles[i];
+			if(pQ3->bFree)
+				continue;
+			float percentInput = (percent / 100) * input;
+			float randomBoost = ofRandom(-percentInput,percentInput)+input;
+			pQ3->boost(randomBoost);
+		}
+	}
+
+	virtual void draw(float grey = 255){
+		int n = particles.size();
+		for (int i = 0; i < n; i++){
+			ParticleQ3  * pQ3 = (ParticleQ3*)particles[i];
+			pQ3->draw(grey);
+		}
+	}
+};
 

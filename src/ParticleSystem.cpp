@@ -289,12 +289,23 @@ void ParticleSystem::addDirectedForce(float targetX, float targetY, float radius
 }
 
 
-
 void ParticleSystem::update() {
+	int iFree = 0;
 	int n = particles.size();
-	for (int i = 0; i < n; i++)
-		particles[i]->updatePosition(timeStep);
+	for (int i = 0; i < n; i++){
+		Particle * p = particles[i];
+		p->updatePosition(timeStep);
+		if(p->bFree){
+			++iFree;
+		}
+	}
+	if(iFree < 1000){
+		ofLog(OF_LOG_WARNING, "WARNING - PARTICLE LEAK - FREE ALL!");
+		freeAllParticles();
+	}
+
 }
+
 
 void ParticleSystem::draw() {
 	int n = particles.size();
@@ -304,4 +315,12 @@ void ParticleSystem::draw() {
 		particles[i]->draw();
 //      testFont.drawString("bla", particles[i].x, particles[i].y);
 //	glEnd();
+}
+
+void ParticleSystem::freeAllParticles(){
+	int n = particles.size();
+	for (int i = 0; i < n; i++){
+		Particle * p = particles[i];
+		p->bFree = true;
+	}
 }
