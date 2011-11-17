@@ -2,10 +2,10 @@
 
 #include "ofMain.h"
 #include "ofGraphics.h"
+#include "ofPoint.h"
 
-class Particle {
+class Particle : public ofPoint {
 public:
-	float x, y;
 	float xv, yv;
 	float xf, yf;
 
@@ -13,7 +13,7 @@ public:
 	bool bFree;
 
 	Particle(float _x = 0, float _y = 0, float _xv = 0, float _yv = 0) :
-			x(_x), y(_y), xv(_xv), yv(_yv) {
+			ofPoint(_x,_y), xv(_xv), yv(_yv) {
 		bFree = true;
 		alpha = 0;
 	}
@@ -32,7 +32,7 @@ public:
 	}
 
 	virtual void updatePosition(float timeStep) {
-		if(free)
+		if(bFree)
 			return;
 		// f = ma, m = 1, f = a, v = int(a)
 		xv += xf;

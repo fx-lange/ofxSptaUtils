@@ -44,7 +44,7 @@ vector<Particle*> ParticleSystem::getNeighbors(Particle& particle,
 }
 
 vector<Particle*> ParticleSystem::getNeighbors(float x, float y, float radius) {
-	vector<Particle*> region = getRegion((int) (x - radius), 
+	vector<Particle*> region = getRegion((int) (x - radius),
 	(int) (y - radius),
 	(int) (x + radius),
 	(int) (y + radius));
@@ -104,9 +104,9 @@ void ParticleSystem::setupForces() {
 	}
 }
 
-void ParticleSystem::addRepulsionForce(const Particle& particle, float radius,
+void ParticleSystem::addRepulsionForce(const ofPoint& p, float radius,
 		float scale) {
-	addRepulsionForce(particle.x, particle.y, radius, scale);
+	addRepulsionForce(p.x, p.y, radius, scale);
 }
 
 void ParticleSystem::addRepulsionForce(float x, float y, float radius,
@@ -114,9 +114,9 @@ void ParticleSystem::addRepulsionForce(float x, float y, float radius,
 	addForce(x, y, radius, scale);
 }
 
-void ParticleSystem::addAttractionForce(const Particle& particle, float radius,
+void ParticleSystem::addAttractionForce(const ofPoint& p, float radius,
 		float scale) {
-	addAttractionForce(particle.x, particle.y, radius, scale);
+	addAttractionForce(p.x, p.y, radius, scale);
 }
 
 void ParticleSystem::addAttractionForce(float x, float y, float radius,
@@ -124,9 +124,9 @@ void ParticleSystem::addAttractionForce(float x, float y, float radius,
 	addForce(x, y, radius, -scale);
 }
 
-void ParticleSystem::addForce(const Particle& particle, float radius,
+void ParticleSystem::addForce(const ofPoint& p, float radius,
 		float scale) {
-	addForce(particle.x, particle.y, radius, -scale);
+	addForce(p.x, p.y, radius, -scale);
 }
 
 void ParticleSystem::addForce(float targetX, float targetY, float radius,
@@ -289,7 +289,7 @@ void ParticleSystem::addDirectedForce(float targetX, float targetY, float radius
 }
 
 
-void ParticleSystem::update() {
+void ParticleSystem::update(bool ignoreFree) {
 	int iFree = 0;
 	int n = particles.size();
 	for (int i = 0; i < n; i++){
@@ -299,7 +299,7 @@ void ParticleSystem::update() {
 			++iFree;
 		}
 	}
-	if(iFree < 1000){
+	if(!ignoreFree && iFree < 1000){
 		ofLog(OF_LOG_WARNING, "WARNING - PARTICLE LEAK - FREE ALL!");
 		freeAllParticles();
 	}
@@ -310,11 +310,11 @@ void ParticleSystem::update() {
 void ParticleSystem::draw() {
 	int n = particles.size();
 //	glPointSize(2);
-//	glBegin(GL_POINTS);
+	glBegin(GL_POINTS);
 	for (int i = 0; i < n; i++)
 		particles[i]->draw();
 //      testFont.drawString("bla", particles[i].x, particles[i].y);
-//	glEnd();
+	glEnd();
 }
 
 void ParticleSystem::freeAllParticles(){
