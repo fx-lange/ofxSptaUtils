@@ -49,7 +49,7 @@ public:
 		bAlive = false;
 		for(int i=0;i<particles.size();++i){
 			particles[i]->setFree(true);
-			//TODO statt free eher sowas wie die benutzen
+			//TODO statt free eher sowas wie KILL benutzen
 		}
 	}
 //protected:
