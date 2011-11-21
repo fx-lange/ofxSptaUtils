@@ -163,6 +163,9 @@ void ParticleSystem::addForce(float targetX, float targetY, float radius,
 			int n = curBin.size();
 			for (int i = 0; i < n; i++) {
 				Particle& curParticle = *(curBin[i]);
+				if(curParticle.bFree || curParticle.bNoForce){
+					continue;
+				}
 				xd = curParticle.x - targetX;
 				yd = curParticle.y - targetY;
 				length = xd * xd + yd * yd;

@@ -11,10 +11,14 @@ public:
 
 	float alpha;
 	bool bFree;
+	bool bNoForce;
+	bool bKillSoft;
+
 
 	Particle(float _x = 0, float _y = 0, float _xv = 0, float _yv = 0) :
 			ofPoint(_x,_y), xv(_xv), yv(_yv) {
 		bFree = true;
+		bNoForce = true;
 		alpha = 0;
 	}
 
@@ -22,11 +26,15 @@ public:
 
 	}
 
+
+
 	virtual void setFree(bool free){
 		bFree = free;
 		if(bFree){
 			alpha = 0;
+			bNoForce = true;
 		}else{
+			bNoForce = false;
 //			cout << "particle reserved" << endl;
 		}
 	}
@@ -39,6 +47,7 @@ public:
 		yv += yf;
 		x += xv * timeStep;
 		y += yv * timeStep;
+
 	}
 	void resetForce() {
 		xf = 0;

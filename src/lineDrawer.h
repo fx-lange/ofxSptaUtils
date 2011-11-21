@@ -5,7 +5,7 @@
 #include "ofxSimpleGuiToo.h"
 #include "ParticleSystem.h"
 #include "maxima.h"
-#include "stringToPoint.h"
+#include "stringToPoints.h"
 
 class lineDrawer {
 public:
@@ -14,8 +14,7 @@ public:
 
 	void setupGuiPage(ofxSimpleGuiPage * gui);
 	void setup(int kParticles);
-	void update(vector<ofPoint> & linePoints,ofMatrix4x4 & transformMatrix);
-	//TODO extra transformation matrix
+	void update(vector<ofPoint> & linePoints,ofMatrix4x4 * transformMatrix);
 	void sendText(messageData data);
 	void draw();
 	void drawParticle();
@@ -24,7 +23,7 @@ public:
 protected:
 
 	void updateForces(vector<ofPoint> & linePoints);
-	void updateMaximas(vector<ofPoint> & linePoints,ofMatrix4x4 & transformMatrix);
+	void updateMaximas(vector<ofPoint> & linePoints);
 	void drawPoints();
 	int chooseMaxima();
 
@@ -37,8 +36,11 @@ protected:
 	int kParticles;
 	float particleNeighborhood;
 	float particleRepulsion;
+	float softFadeOutStep;
 
 	float particleDampingForce;
+	float particleMaxSpeed;
+	float particleSmoothTargetSpeed;
 
 	float maxDistanceToMaxima;
 	int maxMaximaAge;
@@ -65,6 +67,8 @@ protected:
 
 	//Design?!
 	float ampliDiff; //TODO more!
+
+	ofMatrix4x4 * transformMatrix;
 };
 
 #endif

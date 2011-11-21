@@ -11,6 +11,7 @@ void lineDrawer::setup(int kParticles){
 			float y = ofRandom(padding, ofGetHeight() - padding);
 			letterParticle * particle= new letterParticle(x,y);
 			particle->setFree(true);
+			particle->setSettingsPointer(&particleMaxSpeed,&particleSmoothTargetSpeed,&softFadeOutStep);
 			particle->alpha = 255;
 //			particle->xv = 0.3;
 			particleSystem.add(particle);
@@ -22,6 +23,9 @@ void lineDrawer::setupGuiPage(ofxSimpleGuiPage * gui){
 	gui->addSlider("Neighborhood",particleNeighborhood,0,10);
 	gui->addSlider("Repulsion",particleRepulsion,-20,20);
 	gui->addSlider("DumpingForce",particleDampingForce,0,0.5);
+	gui->addSlider("Max Target Speed",particleMaxSpeed,0,30);
+	gui->addSlider("Smooth Target Speed",particleSmoothTargetSpeed,0,0.1);
+	gui->addSlider("Soft Fade Out StepSize",softFadeOutStep,0,10);
 
 	gui->addTitle("Maximas");
 	gui->addSlider("Amplitude Difference", ampliDiff, 0, 1);
@@ -51,17 +55,18 @@ void lineDrawer::setupGuiPage(ofxSimpleGuiPage * gui){
 	gui->addSlider("max Amplitude",maxAmplitude,0,ofGetHeight()/2);
 }
 
-void lineDrawer::update(vector<ofPoint> & linePoints, ofMatrix4x4 & transformMatrix){
+void lineDrawer::update(vector<ofPoint> & linePoints, ofMatrix4x4 * transformMatrix){
+	this->transformMatrix = transformMatrix;
 	/** -- PARTICLE -- **/
 		particleSystem.setTimeStep(0.5);
 		particleSystem.setupForces();
 		//ADD DUMPING TODO
 		for(int i = 0; i < particleSystem.size(); i++) {
 			Particle& cur = particleSystem[i];
-			if(cur.bFree)
+			if(cur.bFree || cur.bNoForce)
 				continue;
 			// global force on other particles
-	//		particleSystem.addRepulsionForce(cur, particleNeighborhood, particleRepulsion);
+			particleSystem.addRepulsionForce(cur, particleNeighborhood, particleRepulsion);
 			// forces on this particle
 //			cur.bounceOffWalls(0, 0, ofGetWidth(), ofGetHeight());
 			cur.addDampingForce(1, particleDampingForce);//TODO
@@ -69,14 +74,14 @@ void lineDrawer::update(vector<ofPoint> & linePoints, ofMatrix4x4 & transformMat
 
 	pointsPtr = &linePoints;
 
-	updateMaximas(linePoints,transformMatrix);
+	updateMaximas(linePoints);
 	updateForces(linePoints);
 
 	particleSystem.update();
 
 }
 
-void lineDrawer::updateMaximas(vector<ofPoint> & linePoints, ofMatrix4x4 & transformMatrix){
+void lineDrawer::updateMaximas(vector<ofPoint> & linePoints){
 	//increase old and kill old maximas
 	list<maxima>::iterator it;
 	for(it=maximas.begin();it!=maximas.end();){
@@ -95,7 +100,7 @@ void lineDrawer::updateMaximas(vector<ofPoint> & linePoints, ofMatrix4x4 & trans
 	int particlePerUnit = nPerFrame;
 	for(int i = 1; i < linePoints.size() - 1; ++i){
 		ofPoint & linePointRaw = linePoints[i];
-		ofPoint linePoint =(linePointRaw*transformMatrix);
+		ofPoint linePoint =(linePointRaw* (*transformMatrix));
 //		ofPoint & nextLinePoint = linePoint[i+1];
 		if( (linePointRaw.y >= linePoints[i-1].y && linePointRaw.y >= linePoints[i+1].y)
 				|| (linePointRaw.y <= linePoints[i-1].y && linePointRaw.y <= linePoints[i+1].y)){
@@ -273,7 +278,6 @@ int lineDrawer::chooseMaxima(){
 }
 
 void lineDrawer::sendText(messageData data){
-
 	ofLog(OF_LOG_VERBOSE,"%d particle benoetigt",data.points.size());
 	int maximaIdx = chooseMaxima();//TODO könnte auch gleich den iterator zurück geben
 
@@ -297,15 +301,18 @@ void lineDrawer::sendText(messageData data){
 			m.addParticle(particle);
 		}
 	}
+	ofMatrix4x4 inverse = transformMatrix->getInverse();
 	for(int i=0;i<data.points.size();++i){
 		letterParticle * p = m.particles[i];
 		ofPoint target = data.points[i]+m;
+		ofPoint reTrans = m * inverse;
 		target.x -= data.boundingBox.width / 2.f;
-		if(target.y > 0){
-			target.y += 50;//TODO GUI
+		if(reTrans.y > 0){
+			target.y += 200;//TODO GUI
 		}else{
-			target.y -= 50;//TODO GUI
+			target.y -= 200;//TODO GUI
 		}
 		p->setTarget(target.x,target.y);
 	}
+	m.particles.clear(); //No more binding needed //TODO revisit - sure?
 }

@@ -48,7 +48,8 @@ public:
 		old = -1;
 		bAlive = false;
 		for(int i=0;i<particles.size();++i){
-			particles[i]->setFree(true);
+			if(!particles[i]->bMoveToTarget)
+				particles[i]->killSoft();
 			//TODO statt free eher sowas wie KILL benutzen
 		}
 	}
