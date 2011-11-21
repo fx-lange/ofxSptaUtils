@@ -9,6 +9,7 @@ public:
 	float xv, yv;
 	float xf, yf;
 
+	float radius;
 	float alpha;
 	bool bFree;
 	bool bNoForce;
@@ -20,6 +21,7 @@ public:
 		bFree = true;
 		bNoForce = true;
 		alpha = 0;
+		radius = 2;
 	}
 
 	virtual ~Particle(){
@@ -93,8 +95,16 @@ public:
 		if(bFree){
 			return;
 		}
-		ofSetColor(grey,grey,grey,alpha);
-		glVertex2f(x, y);
+		ofSetColor(grey,grey,grey,alpha);//TODO include z
+		ofCircle(x,y,radius);
+	}
+
+	virtual void drawVertex(){
+		glPointSize(ofRandom(5));
+		glBegin(GL_POINTS);
+		ofSetColor(255,255,255,alpha);
+		glVertex2f(x,y);
+		glEnd();
 	}
 };
 

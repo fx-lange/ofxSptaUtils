@@ -37,6 +37,9 @@ protected:
 	float particleNeighborhood;
 	float particleRepulsion;
 	float softFadeOutStep;
+	bool bDrawCircles;
+	float aperture;
+	float maxPointSize;
 
 	float particleDampingForce;
 	float particleMaxSpeed;

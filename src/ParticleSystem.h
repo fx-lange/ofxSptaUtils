@@ -43,7 +43,7 @@ public:
 	void addDirectedForce(float x, float y, float radius, float scale, const ofVec3f & direction);
 	virtual void update(bool ignoreFree = true);
 
-	virtual void draw();
+	virtual void draw(bool circle=false);
 
 	void freeAllParticles();
 };

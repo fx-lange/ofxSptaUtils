@@ -11,7 +11,7 @@ void lineDrawer::setup(int kParticles){
 			float y = ofRandom(padding, ofGetHeight() - padding);
 			letterParticle * particle= new letterParticle(x,y);
 			particle->setFree(true);
-			particle->setSettingsPointer(&particleMaxSpeed,&particleSmoothTargetSpeed,&softFadeOutStep);
+			particle->setSettingsPointer(&particleMaxSpeed,&particleSmoothTargetSpeed,&softFadeOutStep,&aperture,&maxPointSize);
 			particle->alpha = 255;
 //			particle->xv = 0.3;
 			particleSystem.add(particle);
@@ -26,6 +26,9 @@ void lineDrawer::setupGuiPage(ofxSimpleGuiPage * gui){
 	gui->addSlider("Max Target Speed",particleMaxSpeed,0,30);
 	gui->addSlider("Smooth Target Speed",particleSmoothTargetSpeed,0,0.1);
 	gui->addSlider("Soft Fade Out StepSize",softFadeOutStep,0,10);
+	gui->addSlider("Max Point Size",maxPointSize,1,40);
+	gui->addSlider("Aperture",aperture,0,0.15);
+	gui->addToggle("Draw as Circle",bDrawCircles);
 
 	gui->addTitle("Maximas");
 	gui->addSlider("Amplitude Difference", ampliDiff, 0, 1);
@@ -249,7 +252,7 @@ void lineDrawer::draw(){
 
 void lineDrawer::drawParticle(){
 	glPointSize(2);
-	particleSystem.draw();
+	particleSystem.draw(bDrawCircles);
 }
 
 void lineDrawer::drawDebug(){
