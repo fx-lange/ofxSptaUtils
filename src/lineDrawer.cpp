@@ -1,10 +1,6 @@
 #include "lineDrawer.h"
 
-void lineDrawer::setup(int kParticles, string fontStr, int fontSize){
-	font.loadFont(fontStr, fontSize, true, true, true);
-	font.setLineHeight(34.0f);
-	font.setLetterSpacing(1.035);
-
+void lineDrawer::setup(int kParticles){
 	/** -- PARTICLE -- **/
 		int binPower = 3;
 		particleSystem.setup(ofGetWidth(), ofGetHeight(), binPower);
@@ -276,36 +272,18 @@ int lineDrawer::chooseMaxima(){
 	return 1;
 }
 
-void lineDrawer::sendText(string & text){
+void lineDrawer::sendText(messageData data){
 
-	vector<ofTTFCharacter> paths =   font.getStringAsPoints(text);
-	ofRectangle boundingBox = font.getStringBoundingBox(text,0,0);
-//		ofLog(OF_LOG_VERBOSE,"pathsize: %d",paths.size());
-	vector<ofPoint> stringPoints;
-	stringPoints.reserve(3000);
-	for(int pi=0;pi<paths.size();++pi){
-		vector<ofPolyline> & lines = paths[pi].getOutline();
-//		ofLog(OF_LOG_VERBOSE,"linescount: %d",lines.size());
-		for (int li = 0; li < lines.size(); ++li) {
-			vector<ofPoint> & line = lines[li].getVertices();
-//			ofLog(OF_LOG_VERBOSE,"pointcount: %d",line.size());
-			stringPoints.insert(stringPoints.end(),line.begin(),line.end());
-		}
-
-		//alternative:
-//		ofMesh & mesh = paths[pi].getTessellation();
-//		vector<ofPoint> & line = mesh.getVertices();
-//		stringPoints.insert(stringPoints.end(),line.begin(),line.end());
-	}
-
-	ofLog(OF_LOG_VERBOSE,"%d particle benoetigt",stringPoints.size());
+	ofLog(OF_LOG_VERBOSE,"%d particle benoetigt",data.points.size());
 	int maximaIdx = chooseMaxima();//TODO könnte auch gleich den iterator zurück geben
+
 	list<maxima>::iterator maximaIt = maximas.begin();
 	advance(maximaIt,maximaIdx);
 	maxima & m = *maximaIt;
+
 	ofLog(OF_LOG_VERBOSE,"maxima hat %d particle",m.particles.size());
 
-	int countDiff = stringPoints.size() - m.particles.size();
+	int countDiff = data.points.size() - m.particles.size();
 	if(countDiff > 0){
 		m.particles.reserve(m.particles.size()+countDiff);
 		for(int i=0;i<countDiff;++i){
@@ -319,10 +297,10 @@ void lineDrawer::sendText(string & text){
 			m.addParticle(particle);
 		}
 	}
-	for(int i=0;i<stringPoints.size();++i){
+	for(int i=0;i<data.points.size();++i){
 		letterParticle * p = m.particles[i];
-		ofPoint target = stringPoints[i]+m;
-		target.x -= boundingBox.width / 2.f;
+		ofPoint target = data.points[i]+m;
+		target.x -= data.boundingBox.width / 2.f;
 		if(target.y > 0){
 			target.y += 50;//TODO GUI
 		}else{

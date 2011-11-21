@@ -5,6 +5,7 @@
 #include "ofxSimpleGuiToo.h"
 #include "ParticleSystem.h"
 #include "maxima.h"
+#include "stringToPoint.h"
 
 class lineDrawer {
 public:
@@ -12,9 +13,10 @@ public:
 	lineDrawer(){ }
 
 	void setupGuiPage(ofxSimpleGuiPage * gui);
-	void setup(int kParticles, string fontStr, int fontSize);
+	void setup(int kParticles);
 	void update(vector<ofPoint> & linePoints,ofMatrix4x4 & transformMatrix);
-	void sendText(string & text);
+	//TODO extra transformation matrix
+	void sendText(messageData data);
 	void draw();
 	void drawParticle();
 	void drawDebug();
@@ -25,8 +27,6 @@ protected:
 	void updateMaximas(vector<ofPoint> & linePoints,ofMatrix4x4 & transformMatrix);
 	void drawPoints();
 	int chooseMaxima();
-
-	ofTrueTypeFont font;
 
 	list<maxima> maximas;
 	vector<ofPoint> noise;
