@@ -5,7 +5,7 @@ void lineDrawer::setup(int kParticles){
 		int binPower = 3;
 		particleSystem.setup(ofGetWidth(), ofGetHeight(), binPower);
 		particleSystem.particles.reserve(kParticles*1000);
-		float padding = 50;
+		float padding = 0;
 		for(int i = 0; i < kParticles * 1000; i++) {
 			float x = ofRandom(padding, ofGetWidth() - padding);
 			float y = ofRandom(padding, ofGetHeight() - padding);
@@ -18,17 +18,19 @@ void lineDrawer::setup(int kParticles){
 		}
 }
 
-void lineDrawer::setupGuiPage(ofxSimpleGuiPage * gui){
+void lineDrawer::setupGuiPage(ofxSimpleGuiToo * gui){
+
+	gui->addPage("LineDrawer 1");
 	gui->addTitle("Particle");
 	gui->addSlider("Neighborhood",particleNeighborhood,0,10);
 	gui->addSlider("Repulsion",particleRepulsion,-20,20);
 	gui->addSlider("DumpingForce",particleDampingForce,0,0.5);
-	gui->addSlider("Max Target Speed",particleMaxSpeed,0,30);
-	gui->addSlider("Smooth Target Speed",particleSmoothTargetSpeed,0,0.1);
+
 	gui->addSlider("Soft Fade Out StepSize",softFadeOutStep,0,10);
-	gui->addSlider("Max Point Size",maxPointSize,1,40);
-	gui->addSlider("Aperture",aperture,0,0.15);
 	gui->addToggle("Draw as Circle",bDrawCircles);
+
+	gui->addTitle("Text").newColumn = true;
+
 
 	gui->addTitle("Maximas");
 	gui->addSlider("Amplitude Difference", ampliDiff, 0, 1);
@@ -36,7 +38,7 @@ void lineDrawer::setupGuiPage(ofxSimpleGuiPage * gui){
 	gui->addSlider("Max Maxima Age",maxMaximaAge,1,100);
 	gui->addSlider("Particle Mode",particleMode,0,2);
 
-	gui->addTitle("Mode 0 - maxima attraction").newColumn = true;
+	gui->addTitle("Mode 0 - maxima attraction");
 	gui->addSlider("Maxima Radius",maximaNeighboorhood,0,100);
 	gui->addSlider("Maxima Attraction",maximaAttraction,-20,20);
 	gui->addTitle("Mode 1 - maxima forces");
@@ -56,10 +58,28 @@ void lineDrawer::setupGuiPage(ofxSimpleGuiPage * gui){
 	gui->addSlider("per Unit",nPerFrame,0,10);
 	gui->addTitle("Mode 1");
 	gui->addSlider("max Amplitude",maxAmplitude,0,ofGetHeight()/2);
+
+	gui->addPage("LineDrawer - Text");
+	gui->addTitle("Movement");
+	gui->addSlider("Max Target Speed",particleMaxSpeed,0,30);
+	gui->addSlider("Smooth Target Speed",particleSmoothTargetSpeed,0,0.1);
+	gui->addSlider("isClose Distance",switchToReadDistance,0,50);
+	gui->addSlider("Move Y Min",moveYMin,0,500);
+	gui->addSlider("Move Y Max",moveYMax,100,500);
+	gui->addTitle("Read");
+	gui->addSlider("how long ms",timeForEachText,1000,30000);
+	gui->addSlider("time to read",timeBeforeFadeout,500,10000);
+	gui->addTitle("Fadeout");
+	gui->addSlider("Text Z Step",zStepText,0,5);
+	gui->addSlider("Text Alpha IN Step",alphaStepInText,0,10);
+	gui->addSlider("Text Alpha OUT Step",alphaStepOutText,0,10);
+	gui->addSlider("Aperture",aperture,0,0.15);
+	gui->addSlider("Max Point Size",maxPointSize,1,100);
 }
 
-void lineDrawer::update(vector<ofPoint> & linePoints, ofMatrix4x4 * transformMatrix){
+void lineDrawer::update(vector<ofPoint> & linePoints, ofMatrix4x4 * transformMatrix, float scale){
 	this->transformMatrix = transformMatrix;
+	this->scale = scale;
 	/** -- PARTICLE -- **/
 		particleSystem.setTimeStep(0.5);
 		particleSystem.setupForces();
@@ -77,11 +97,63 @@ void lineDrawer::update(vector<ofPoint> & linePoints, ofMatrix4x4 * transformMat
 
 	pointsPtr = &linePoints;
 
+	updateTPCs();
 	updateMaximas(linePoints);
 	updateForces(linePoints);
 
-	particleSystem.update();
+	particleSystem.update(false);
 
+    frameCount = (frameCount + 1) % 120;
+    if(frameCount==0){
+    	ofLog(OF_LOG_NOTICE,"%d Particle frei",particleSystem.nFree);
+    }
+}
+
+void lineDrawer::updateTPCs(){
+	if(tpcs.size()>0){
+		textParticleContainer & tpc = tpcs.front();
+		if(ofGetSystemTime() - tpc.timeStamp > (long)timeForEachText ){
+			tpc.die();
+			tpcs.pop_front();
+		}
+
+		int now = ofGetSystemTime();
+		list<textParticleContainer>::iterator it = tpcs.begin();
+		for(;it!=tpcs.end();++it){
+			//move
+			if(it->mode == MOVE){
+				//if close (<switchToReadDistance) it->mode = READ -set updateTime = now
+				int nClose = 0;
+				for(int ii=0;ii<10;++ii){
+					int idx = ofRandom(it->particles.size()-1);
+					if(it->particles[idx]->getDistanceToTarget()<switchToReadDistance){
+						++nClose;
+					}
+				}
+				if(nClose>=5){
+					ofLog(OF_LOG_NOTICE,"READ");
+					it->mode = READ;
+					it->tLastUpdate = now;
+				}
+			}
+			//read
+			else if(it->mode == READ){
+				it->alpha += alphaStepInText;
+				it->alpha = min(it->alpha,255.f);
+				//if time over -> it->mode = FADEOUT
+				if(now - it->tLastUpdate > timeBeforeFadeout){
+					it->mode = FADEOUT;
+					ofLog(OF_LOG_NOTICE,"FADEOUT");
+					cout << now - it->tLastUpdate << endl;
+				}
+			}
+			//fadeout
+			else if(it->mode == FADEOUT){
+				it->fadeOut(zStepText);
+				it->alpha -= alphaStepOutText;
+			}
+		}
+	}
 }
 
 void lineDrawer::updateMaximas(vector<ofPoint> & linePoints){
@@ -154,7 +226,7 @@ void lineDrawer::updateMaximas(vector<ofPoint> & linePoints){
 				particle->y = linePoint.y+ofRandom(-randomRadius,+randomRadius);
 				particle->xv = 0;
 				particle->yv = 0;
-				particle->alpha=100;
+//				particle->alpha=255;
 				maximaPtr->addParticle(particle);
 			}
 		}
@@ -227,6 +299,7 @@ void lineDrawer::draw(){
 	ofPushMatrix();
 	ofScale(1, 1 + ampliDiff, 1);
 	ofSetColor(190, 50, 30, 150);
+
 	glPointSize(1);
 	drawPoints();
 
@@ -251,6 +324,16 @@ void lineDrawer::draw(){
 }
 
 void lineDrawer::drawParticle(){
+	//	ofSetRectMode(OF_RECTMODE_CENTER);
+	glPointSize(1);
+	list<textParticleContainer>::iterator it = tpcs.begin();
+	for(;it!=tpcs.end();++it){
+		if(it->mode == MOVE){
+			continue;
+		}
+		ofSetColor(255,255,255,it->alpha);
+		it->font->drawString(it->text,it->boundingBox.x,it->boundingBox.y);
+	}
 	glPointSize(2);
 	particleSystem.draw(bDrawCircles);
 }
@@ -281,6 +364,12 @@ int lineDrawer::chooseMaxima(){
 }
 
 void lineDrawer::sendText(messageData data){
+	textParticleContainer tpc;
+	tpc.timeStamp = ofGetSystemTime();
+	tpc.text = data.text;
+	tpc.boundingBox = data.boundingBox;
+	tpc.font = data.font;
+
 	ofLog(OF_LOG_VERBOSE,"%d particle benoetigt",data.points.size());
 	int maximaIdx = chooseMaxima();//TODO könnte auch gleich den iterator zurück geben
 
@@ -300,22 +389,32 @@ void lineDrawer::sendText(messageData data){
 			particle->y = m.y+ofRandom(-randomRadius,+randomRadius);
 			particle->xv = 0;
 			particle->yv = 0;
-			particle->alpha=30;
+			particle->alpha=255;
 			m.addParticle(particle);
 		}
 	}
 	ofMatrix4x4 inverse = transformMatrix->getInverse();
+	ofPoint reTrans = m * inverse;
+	float move = ofRandom(moveYMin,moveYMax);
+	float vorz;
+	if(reTrans.y > 0){
+		vorz = 1;
+	}else{
+		vorz = -1;
+	}
+
 	for(int i=0;i<data.points.size();++i){
 		letterParticle * p = m.particles[i];
 		ofPoint target = data.points[i]+m;
-		ofPoint reTrans = m * inverse;
+
 		target.x -= data.boundingBox.width / 2.f;
-		if(reTrans.y > 0){
-			target.y += 200;//TODO GUI
-		}else{
-			target.y -= 200;//TODO GUI
-		}
+		target.y += vorz * move;
 		p->setTarget(target.x,target.y);
+		tpc.particles.push_back(p);
+
 	}
+	tpc.boundingBox.x = m.x - tpc.boundingBox.width/2.f;
+	tpc.boundingBox.y = m.y +vorz * move;
+	tpcs.push_back(tpc);
 	m.particles.clear(); //No more binding needed //TODO revisit - sure?
 }

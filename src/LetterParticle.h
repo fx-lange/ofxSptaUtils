@@ -49,14 +49,18 @@ public:
 		dx = (target.x - x)* smooth;
 		dy = (target.y - y)* smooth;
 
-		if(abs(dx+dy)> *maxSpeed){
-			float fac = *maxSpeed / (float)(abs(dx+dy));
+		if(abs(dx)+abs(dy)> *maxSpeed){
+			float fac = *maxSpeed / (float)(abs(dx)+abs(dy));
 			dx *= fac;
 			dy *= fac;
 		}
 
 		x += dx;
 		y += dy;
+	}
+
+	virtual float getDistanceToTarget(){
+		return this->distance(target);
 	}
 
 	virtual void draw(float grey = 255) {
@@ -73,16 +77,15 @@ public:
 		}
 		float opacity = 1;
 		float size = 0;
-		z = ofRandom(20);
 
 		if (z!=0){
-			size = ofRandom(20) * *aperture + 1.;
+			size = z * *aperture + 1.;
 			size = min(size, *maxPointSize);
 			float r = size / 2.f;
-			opacity = 1 / (PI * r * r);
+			opacity = 1.f / (PI * r * r);
 		}
 
-		glPointSize(2+size);
+		glPointSize(2.f+size);
 		glBegin(GL_POINTS);
 		ofSetColor(255,255,255,alpha*opacity);
 		glVertex2f(x,y);

@@ -34,11 +34,15 @@ public:
 		bFree = free;
 		if(bFree){
 			alpha = 0;
+			z=0;
 			bNoForce = true;
 		}else{
 			bNoForce = false;
+			alpha = 255;
+			z=0;
 //			cout << "particle reserved" << endl;
 		}
+		bKillSoft = false;
 	}
 
 	virtual void updatePosition(float timeStep) {

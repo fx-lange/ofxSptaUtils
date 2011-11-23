@@ -35,6 +35,11 @@ Particle& ParticleSystem::operator[](unsigned i) {
 Particle * ParticleSystem::getNext(){
 	Particle * p = particles[index];
 	index = (index+1) % (particles.size());
+	while(!p->bFree){
+		p = particles[index];
+		index = (index+1) % (particles.size());
+	}
+	p->setFree(false);
 	return p;
 }
 
@@ -302,11 +307,11 @@ void ParticleSystem::update(bool ignoreFree) {
 			++iFree;
 		}
 	}
-	if(!ignoreFree && iFree < 1000){
+	if(!ignoreFree && iFree < 5000){
 		ofLog(OF_LOG_WARNING, "WARNING - PARTICLE LEAK - FREE ALL!");
 		freeAllParticles();
 	}
-
+	nFree = iFree;
 }
 
 

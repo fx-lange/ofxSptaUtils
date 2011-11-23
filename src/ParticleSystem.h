@@ -10,12 +10,16 @@
 class ParticleSystem {
 protected:
 	int index;
+
 	float timeStep;
 
 	vector<vector<Particle*> > bins;
 	int width, height, k, xBins, yBins, binSize;
 
 public:
+
+    int nFree;
+
 	vector<Particle*> particles;
 	ParticleSystem();
 	~ParticleSystem(){}
@@ -62,7 +66,7 @@ public:
 				iFree++;
 		}
 		if(iFree < 1000){
-			cout << "WARNING - PARTICLE LEAK - FREE ALL!" << endl;
+			ofLog(OF_LOG_WARNING,"PARTICLE LEAK - FREE ALL!");
 			freeAllParticles();
 		}
 	}

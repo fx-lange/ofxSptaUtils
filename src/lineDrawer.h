@@ -7,14 +7,50 @@
 #include "maxima.h"
 #include "stringToPoints.h"
 
+enum tpcMode{
+	MOVE,
+	READ,
+	FADEOUT
+};
+
+class textParticleContainer{
+public:
+	textParticleContainer() {
+		alpha = 0;
+		mode = MOVE;
+		tLastUpdate = -1;
+	}
+
+	void die(){
+		for(int i=0;i<particles.size();++i){
+			particles[i]->killSoft();//TODO oder free?
+		}
+	}
+
+	void fadeOut(float zStep){
+		for(int i=0;i<particles.size();++i){
+			particles[i]->z += zStep;
+		}
+	}
+
+	vector<letterParticle*> particles;
+	long timeStamp;
+	string text;
+	ofRectangle boundingBox;
+	ofTrueTypeFont * font;
+	float alpha;
+	tpcMode mode;
+	int tLastUpdate;
+};
+
 class lineDrawer {
 public:
 
 	lineDrawer(){ }
 
-	void setupGuiPage(ofxSimpleGuiPage * gui);
+	void setupGuiPage(ofxSimpleGuiToo * gui);
 	void setup(int kParticles);
-	void update(vector<ofPoint> & linePoints,ofMatrix4x4 * transformMatrix);
+	void update(vector<ofPoint> & linePoints,ofMatrix4x4 * transformMatrix,float scale);
 	void sendText(messageData data);
 	void draw();
 	void drawParticle();
@@ -24,12 +60,14 @@ protected:
 
 	void updateForces(vector<ofPoint> & linePoints);
 	void updateMaximas(vector<ofPoint> & linePoints);
+	void updateTPCs();
 	void drawPoints();
 	int chooseMaxima();
 
 	list<maxima> maximas;
 	vector<ofPoint> noise;
 	vector<ofPoint> * pointsPtr;
+
 
 	//SETTINGS
 	ParticleSystem particleSystem;
@@ -72,6 +110,19 @@ protected:
 	float ampliDiff; //TODO more!
 
 	ofMatrix4x4 * transformMatrix;
+	float scale; //TODO doppel gemoppelt
+
+	//TPCS
+	list<textParticleContainer> tpcs;
+	int timeForEachText;
+	int timeBeforeFadeout;
+	float zStepText;
+	float alphaStepOutText;
+	float alphaStepInText;
+	float switchToReadDistance;
+	float moveYMin, moveYMax;
+
+	int frameCount;
 };
 
 #endif

@@ -50,7 +50,6 @@ public:
 		for(int i=0;i<particles.size();++i){
 			if(!particles[i]->bMoveToTarget)
 				particles[i]->killSoft();
-			//TODO statt free eher sowas wie KILL benutzen
 		}
 	}
 //protected:
